@@ -8,21 +8,15 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Button } from "@/registry/m3e/ui/button/button";
+import { Button } from "@/components/ui/m3e/button";
 
 export default function ButtonDocs() {
   const [toggleChecked, setToggleChecked] = useState(false);
 
-  const variants = [
-    "filled",
-    "outlined",
-    "text",
-    "tonal",
-    "elevated",
-    "toggle",
-  ] as const;
-  const sizes = ["xs", "s", "m", "l", "xl", "icon"] as const;
+  const variants = ["filled", "outlined", "text", "tonal", "elevated"] as const;
+  const sizes = ["xs", "s", "m", "l", "xl"] as const;
   const shapes = ["round", "square"] as const;
+  const toggleVariants = ["filled", "outlined", "tonal", "elevated"] as const;
 
   return (
     <div className="container mx-auto space-y-8 p-8">
@@ -51,17 +45,6 @@ export default function ButtonDocs() {
               <div className="space-y-2 rounded border p-4" key={variant}>
                 <h3 className="font-medium capitalize">{variant}</h3>
                 <Button variant={variant}>Sample {variant} Button</Button>
-                {variant === "toggle" && (
-                  <div className="space-y-1">
-                    <Button
-                      data-state={toggleChecked ? "checked" : "unchecked"}
-                      onClick={() => setToggleChecked(!toggleChecked)}
-                      variant="toggle"
-                    >
-                      Toggle {toggleChecked ? "Checked" : "Unchecked"}
-                    </Button>
-                  </div>
-                )}
               </div>
             ))}
           </div>
@@ -170,6 +153,35 @@ export default function ButtonDocs() {
               </div>
             </div>
           ))}
+        </CardContent>
+      </Card>
+
+      <hr className="my-8" />
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Toggle Buttons</CardTitle>
+          <CardDescription>
+            Toggle buttons with default and selected states, using
+            buttonType="toggle".
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+            {toggleVariants.map((variant) => (
+              <div className="space-y-2 rounded border p-4" key={variant}>
+                <h3 className="font-medium capitalize">{variant} Toggle</h3>
+                <Button
+                  buttonType="toggle"
+                  data-state={toggleChecked ? "checked" : "unchecked"}
+                  onClick={() => setToggleChecked(!toggleChecked)}
+                  variant={variant}
+                >
+                  {variant} {toggleChecked ? "Selected" : "Unselected"}
+                </Button>
+              </div>
+            ))}
+          </div>
         </CardContent>
       </Card>
     </div>

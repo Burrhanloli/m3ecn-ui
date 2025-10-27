@@ -1,8 +1,8 @@
-# M3 Buttons Specification: Types, Configurations, and Tokens
+# M3 Buttons Specification
 
-This document summarizes the button specifications from Material Design 3, including the available types, configurations, and a selection of key design tokens.
+This document summarizes the button specifications from Material Design 3, including the available types, configurations.
 
-## Button Types
+## Types
 
 M3 supports two primary button types: **Default** and **Toggle (selection)**. The "M3 Expressive" variant introduces the Toggle button.
 
@@ -13,7 +13,7 @@ M3 supports two primary button types: **Default** and **Toggle (selection)**. Th
 
 ***
 
-## Button Configurations
+## Configurations
 
 Buttons can be configured by Size, Shape, and Color.
 
@@ -53,7 +53,7 @@ Corner radii for the expressive sizes (XS to XL) vary based on shape and state.
 
 ***
 
-## Button State
+## States
 
 ### 1. Primary Interaction States
 
@@ -109,3 +109,33 @@ Toggle buttons modify their resting shape between the Unselected and Selected st
 | :--- | :--- | :--- |
 | **Round** (Full Corner) | Becomes **Selected** | **Square** (`12dp` to `28dp` corner radius, depending on size) |
 | **Square** (Rounded Corner) | Becomes **Selected** | **Round** (Full Corner) |
+
+## Color
+
+Color values for buttons are implemented through **design tokens**, which are the building blocks of all UI elements. For implementation, a color value is a token that references a color role in the system's color palette.
+
+### Five Built-in Button Color Styles
+
+There are five standard color styles in Material Design 3 (M3):
+
+1. **Elevated**
+2. **Filled**
+3. **Tonal**
+4. **Outlined**
+5. **Text**
+
+**Note:** Both **Default** and **Toggle** buttons use these styles, but **Toggle buttons do not use the Text style**.
+
+## Color Role Mapping
+
+The color roles were chosen for design coherence and familiarity. When using custom colors, ensure the **container and text maintain a minimum 3:1 contrast ratio**.
+
+The table below shows the color roles used for the container and content (icon & label) for each button style in both **Default** and **Toggle** variations (Light/Default theme):
+
+| Button Style (Container / Content) | Default Button | Toggle Unselected | Toggle Selected |
+| :--- | :--- | :--- | :--- |
+| **Elevated** | Container: `Surface container low` / Content: `Primary` | Container: `Surface container low` / Content: `Primary` | Container: `Primary` / Content: `On primary` |
+| **Filled** | Container: `Primary` / Content: `On primary` | Container: `Surface container` / Content: `On surface variant` | Container: `Primary` / Content: `On primary` |
+| **Tonal** | Container: `Secondary container` / Content: `On secondary container` | Container: `Secondary container` / Content: `On secondary container` | Container: `Secondary` / Content: `On secondary` |
+| **Outlined** | Container: (None) / Outline: `Outline variant` / Content: `On surface variant` | Container: (None) / Outline: `Outline variant` / Content: `On surface variant` | Container: `Inverse surface` / Outline: (None) / Content: `Inverse on surface` |
+| **Text** | Container: (None) / Content: `Primary` | **--** | **--** |

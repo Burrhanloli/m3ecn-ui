@@ -10,9 +10,32 @@
       "description": "A button component styled according to Material 3 expressive design guidelines.",
       "files": [
         {
-          "path": "components/ui/m3e/button/button.tsx",
+          "path": "components/ui/m3e/button.tsx",
           "type": "registry:component",
           "target": "components/ui/m3e/button.tsx"
+        },
+        {
+          "path": "components/ui/m3e/styles/m3e-colors.css",
+          "type": "registry:component",
+          "target": "components/ui/m3e/styles/m3e-colors.css"
+        }
+      ]
+    },
+    {
+      "name": "button-group",
+      "type": "registry:component",
+      "title": "Material 3 Expressive Button Group",
+      "description": "A button group component styled according to Material 3 expressive design guidelines.",
+      "files": [
+        {
+          "path": "components/ui/m3e/button-groups.tsx",
+          "type": "registry:component",
+          "target": "components/ui/m3e/button-groups.tsx"
+        },
+        {
+          "path": "components/ui/m3e/styles/m3e-colors.css",
+          "type": "registry:component",
+          "target": "components/ui/m3e/styles/m3e-colors.css"
         }
       ]
     }
