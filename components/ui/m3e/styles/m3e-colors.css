@@ -141,3 +141,30 @@
   --md3-shadow: rgb(0 0 0);
   --md3-scrim: rgb(0 0 0);
 }
+
+/* Target buttons inside a STANDARD group */
+[data-slot="button-group"][data-type="standard"] > [data-button-type="toggle"] {
+  /* Base transition for the animation */
+  transition: width 300ms ease, margin 300ms ease;
+}
+
+/* Style the SELECTED button in a standard group */
+[data-slot="button-group"][data-type="standard"] > [data-state="checked"] {
+  /* Example: make it wider */
+  width: 120px;
+}
+
+/* Style the button IMMEDIATELY AFTER a selected button */
+[data-slot="button-group"][data-type="standard"]
+  > [data-state="checked"]
+  + [data-button-type="toggle"] {
+  /* Example: make it narrower */
+  width: 80px;
+}
+
+/* Style the button IMMEDIATELY BEFORE a selected button (using :has) */
+[data-slot="button-group"][data-type="standard"]
+  > [data-button-type="toggle"]:has(+ [data-state="checked"]) {
+  /* Example: make it narrower */
+  width: 80px;
+}

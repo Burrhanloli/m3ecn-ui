@@ -2,11 +2,12 @@ import { Slot } from "@radix-ui/react-slot";
 import { cva, type VariantProps } from "class-variance-authority";
 import * as React from "react";
 import { Button } from "@/components/ui/m3e/button";
+import { IconButton } from "@/components/ui/m3e/icon-button";
 import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
 import "@/components/ui/m3e/styles/m3e-colors.css";
 
-const buttonGroupVariants = cva("flex items-stretch", {
+const buttonGroupVariants = cva("flex flex-row items-stretch", {
   variants: {
     type: {
       standard: "",
@@ -27,31 +28,13 @@ const buttonGroupVariants = cva("flex items-stretch", {
       single: "",
       multi: "",
     },
-    orientation: {
-      horizontal: "flex-row",
-      vertical: "flex-col",
-    },
   },
   defaultVariants: {
     type: "standard",
-    size: "m",
-    shape: "round",
-    selection: "single",
-    orientation: "horizontal",
+    size: "s",
+    shape: "square",
   },
 });
-
-type ButtonGroupContextValue = {
-  selection: "single" | "multi";
-  size: string;
-  shape: string;
-  value: string | string[] | null;
-  onChange: (value: string | string[] | null) => void;
-};
-
-const ButtonGroupContext = React.createContext<ButtonGroupContextValue | null>(
-  null
-);
 
 type ButtonGroupProps = Omit<React.ComponentProps<"div">, "onChange"> &
   VariantProps<typeof buttonGroupVariants> & {
@@ -62,117 +45,162 @@ type ButtonGroupProps = Omit<React.ComponentProps<"div">, "onChange"> &
 
 function ButtonGroup({
   className,
-  type,
-  size,
-  shape,
+  type = "standard",
+  size = "s",
+  shape = "square",
   selection,
-  orientation,
   children,
   value,
   onChange,
   ...props
 }: ButtonGroupProps) {
-  const gapClass =
-    type === "connected"
-      ? "gap-[2px]"
-      : // 2dp
-        size === "xs"
-        ? "gap-[16px]"
-        : // 18dp
-          size === "s"
-          ? "gap-[12px]"
-          : // 12dp
-            "gap-[8px]"; // 8dp for m/l/xl
+  const getConnectedRadii = (
+    position: "first" | "middle" | "last"
+  ): React.CSSProperties => {
+    const radii = {
+      xs: "8px",
+      s: "8px",
+      m: "12px",
+      l: "12px",
+      xl: "12px",
+    };
 
-  const contextValue: ButtonGroupContextValue = {
-    selection: selection || "single",
-    size: size || "m",
-    shape: shape || "round",
-    value: value || null,
-    onChange: onChange || (() => {}),
+    const roundRadii = {
+      xs: "16px",
+      s: "16px",
+      m: "24px",
+      l: "24px",
+      xl: "24px",
+    };
+    const radius = radii[size as keyof typeof radii] ?? "12px";
+    const roundRadius = roundRadii[size as keyof typeof roundRadii] ?? "24px";
+
+    let style: React.CSSProperties = {};
+
+    if (position === "first") {
+      style = {
+        borderTopLeftRadius: roundRadius,
+        borderBottomLeftRadius: roundRadius,
+        borderTopRightRadius: radius,
+        borderBottomRightRadius: radius,
+      };
+    } else if (position === "last") {
+      style = {
+        borderTopLeftRadius: radius,
+        borderBottomLeftRadius: radius,
+        borderTopRightRadius: roundRadius,
+        borderBottomRightRadius: roundRadius,
+      };
+    }
+
+    return style;
   };
 
-  const clonedChildren = React.Children.map(children, (child) => {
-    if (React.isValidElement(child) && child.type === Button) {
+  const gapClass = (() => {
+    if (type === "connected") {
+      return "gap-[2px]";
+    }
+    if (size === "xs") {
+      return "gap-[18px]";
+    }
+    if (size === "s") {
+      return "gap-[12px]";
+    }
+    return "gap-[8px]";
+  })();
+
+  const childrenArray = React.Children.toArray(children);
+
+  const clonedChildren = childrenArray.map((child, index) => {
+    if (
+      React.isValidElement(child) &&
+      (child.type === Button || child.type === IconButton)
+    ) {
+      const childProps = child.props as
+        | React.ComponentProps<typeof Button>
+        | React.ComponentProps<typeof IconButton>;
+      const childValue = childProps.value as string;
+
+      // Determine position for connected type
+      let connectedStyle: React.CSSProperties = {};
+      if (type === "connected") {
+        const position =
+          childrenArray.length === 1
+            ? "first"
+            : index === 0
+              ? "first"
+              : index === childrenArray.length - 1
+                ? "last"
+                : "middle";
+        connectedStyle = getConnectedRadii(position);
+      }
+
+      // Determine selection state
+      const isSelected =
+        selection === "single"
+          ? value === childValue
+          : Array.isArray(value) && value.includes(childValue);
+
+      const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+        if (onChange) {
+          if (selection === "single") {
+            onChange(isSelected ? null : childValue);
+          } else {
+            const current = Array.isArray(value) ? value : [];
+            const newValue = isSelected
+              ? current.filter((v: string) => v !== childValue)
+              : [...current, childValue];
+            onChange(newValue);
+          }
+        }
+        if (childProps.onClick) {
+          childProps.onClick(event);
+        }
+      };
+
+      const finalStyle =
+        type === "connected" && !isSelected && shape !== "round"
+          ? { ...(childProps.style || {}), ...connectedStyle }
+          : childProps.style || {};
+
       return React.cloneElement(child, {
-        size: size || "m",
-        shape: shape || "round",
-        ...(child.props as any),
+        size: size ?? "s",
+        shape: shape ?? "square",
+        style: finalStyle,
+        className: cn(childProps.className, "self-center"),
+        "data-state": isSelected ? "checked" : undefined,
+        onClick: handleClick,
+        buttonType: "toggle",
+        variant: childProps.variant ?? "tonal",
+        ...childProps,
       });
     }
     return child;
   });
 
   return (
-    <ButtonGroupContext.Provider value={contextValue}>
-      <div
-        className={cn(
-          buttonGroupVariants({ type, size, shape, selection, orientation }),
-          gapClass,
-          className
-        )}
-        data-slot="button-group"
-        role={selection === "single" ? "radiogroup" : "group"}
-        {...(orientation && { "aria-orientation": orientation })}
-        {...props}
-      >
-        {clonedChildren}
-      </div>
-    </ButtonGroupContext.Provider>
+    <div
+      className={cn(
+        buttonGroupVariants({ type, size, shape, selection }),
+        gapClass,
+        className
+      )}
+      data-slot="button-group"
+      data-type={type}
+      role={selection === "single" ? "radiogroup" : "group"}
+      {...props}
+    >
+      {clonedChildren}
+    </div>
   );
-}
-
-function ButtonGroupButton({
-  value,
-  children,
-  ...props
-}: {
-  value: string;
-  children: React.ReactElement<typeof Button>;
-} & React.ComponentProps<typeof Button>) {
-  const context = React.useContext(ButtonGroupContext);
-  if (!context) {
-    return children;
-  }
-
-  const isSelected =
-    context.selection === "single"
-      ? context.value === value
-      : Array.isArray(context.value) && context.value.includes(value);
-
-  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    if (context.selection === "single") {
-      context.onChange(isSelected ? null : value);
-    } else {
-      const current = Array.isArray(context.value) ? context.value : [];
-      const newValue = isSelected
-        ? current.filter((v) => v !== value)
-        : [...current, value];
-      context.onChange(newValue);
-    }
-    if ((children.props as any).onClick) {
-      (children.props as any).onClick(event);
-    }
-  };
-
-  return React.cloneElement(children, {
-    "data-state": isSelected ? "checked" : undefined,
-    onClick: handleClick,
-    ...props,
-    buttonType: "toggle",
-    variant: "tonal",
-  } as any);
 }
 
 function ButtonGroupText({
   className,
   asChild = false,
   ...props
-}: React.ComponentProps<"div"> & {
-  asChild?: boolean;
-}) {
+}: React.ComponentProps<"div"> & { asChild?: boolean }) {
   const Comp = asChild ? Slot : "div";
-
   return (
     <Comp
       className={cn(
@@ -204,7 +232,6 @@ function ButtonGroupSeparator({
 
 export {
   ButtonGroup,
-  ButtonGroupButton,
   ButtonGroupSeparator,
   ButtonGroupText,
   buttonGroupVariants,

@@ -65,6 +65,11 @@ export default function RootLayout({
                       <Link href="/docs/button-groups">Button Groups</Link>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
+                  <SidebarMenuItem>
+                    <SidebarMenuButton asChild>
+                      <Link href="/docs/icon-button">Icon Button</Link>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
                 </SidebarMenu>
               </SidebarContent>
             </Sidebar>

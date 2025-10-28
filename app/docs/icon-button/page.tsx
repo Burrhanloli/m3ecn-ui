@@ -1,5 +1,6 @@
 "use client";
 
+import { Heart, Star } from "lucide-react";
 import { useState } from "react";
 import {
   Card,
@@ -8,26 +9,27 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Button } from "@/components/ui/m3e/button";
+import { IconButton } from "@/components/ui/m3e/icon-button";
 
-export default function ButtonDocs() {
+export default function IconButtonDocs() {
   const [toggleChecked, setToggleChecked] = useState(false);
 
-  const variants = ["filled", "outlined", "text", "tonal", "elevated"] as const;
+  const variants = ["filled", "outlined", "standard", "tonal"] as const;
   const sizes = ["xs", "s", "m", "l", "xl"] as const;
   const shapes = ["round", "square"] as const;
-  const toggleVariants = ["filled", "outlined", "tonal", "elevated"] as const;
+  const widths = ["narrow", "default", "wide"] as const;
+  const toggleVariants = ["filled", "outlined", "tonal"] as const;
 
   return (
     <div className="container mx-auto space-y-8 p-8">
       <Card>
         <CardHeader className="text-center">
           <CardTitle className="font-bold text-4xl">
-            M3 Button Component Documentation
+            M3 Icon Button Component Documentation
           </CardTitle>
           <CardDescription className="text-lg">
-            Preview of all variants, sizes, and shapes for the Material Design 3
-            Expressive button component.
+            Preview of all variants, sizes, shapes, and widths for the Material
+            Design 3 Expressive icon button component.
           </CardDescription>
         </CardHeader>
       </Card>
@@ -36,27 +38,27 @@ export default function ButtonDocs() {
         <CardHeader>
           <CardTitle>Variants</CardTitle>
           <CardDescription>
-            Explore the different button variants available in M3 Expressive.
+            Explore the different icon button variants available in M3
+            Expressive.
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
             {variants.map((variant) => {
               const descriptions = {
                 filled:
-                  "Filled buttons have the highest emphasis and are used for primary actions that require immediate attention.",
+                  "Filled icon buttons have the highest emphasis and are used for primary actions.",
                 outlined:
-                  "Outlined buttons have medium emphasis and are used for secondary actions or important actions that aren't primary.",
-                text: "Text buttons have the lowest emphasis and are used for optional actions or less critical functions.",
+                  "Outlined icon buttons have medium emphasis with a border.",
+                standard:
+                  "Standard icon buttons have no background, used for optional actions.",
                 tonal:
-                  "Tonal buttons have medium emphasis with a subtle background color, providing an alternative to filled buttons in less prominent scenarios.",
-                elevated:
-                  "Elevated buttons include a shadow for depth and are used when buttons need to stand out on layered surfaces.",
+                  "Tonal icon buttons have a subtle background color for medium emphasis.",
               };
               return (
                 <div className="space-y-3 rounded border p-4" key={variant}>
                   <h3 className="font-medium capitalize">{variant}</h3>
-                  <Button variant={variant}>Sample {variant} Button</Button>
+                  <IconButton icon={<Star />} variant={variant} />
                   <p className="text-muted-foreground text-sm">
                     {descriptions[variant]}
                   </p>
@@ -73,15 +75,15 @@ export default function ButtonDocs() {
         <CardHeader>
           <CardTitle>Sizes</CardTitle>
           <CardDescription>
-            Different sizes from XS to XL, plus icon size.
+            Different sizes from XS to XL, with appropriate touch targets.
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-5">
             {sizes.map((size) => (
               <div className="space-y-2 rounded border p-4" key={size}>
                 <h3 className="font-medium capitalize">{size}</h3>
-                <Button size={size}>Size {size}</Button>
+                <IconButton icon={<Star />} size={size} />
               </div>
             ))}
           </div>
@@ -102,7 +104,28 @@ export default function ButtonDocs() {
             {shapes.map((shape) => (
               <div className="space-y-2 rounded border p-4" key={shape}>
                 <h3 className="font-medium capitalize">{shape}</h3>
-                <Button shape={shape}>Shape {shape}</Button>
+                <IconButton icon={<Star />} shape={shape} />
+              </div>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
+
+      <hr className="my-8" />
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Widths</CardTitle>
+          <CardDescription>
+            Narrow, Default, and Wide spacing around the icon.
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+            {widths.map((width) => (
+              <div className="space-y-2 rounded border p-4" key={width}>
+                <h3 className="font-medium capitalize">{width}</h3>
+                <IconButton icon={<Star />} shape="square" width={width} />
               </div>
             ))}
           </div>
@@ -115,22 +138,23 @@ export default function ButtonDocs() {
         <CardHeader>
           <CardTitle>Ripple Effect</CardTitle>
           <CardDescription>
-            Buttons now include a ripple effect on click using Framer Motion.
-            The ripple originates from the click position and animates outward.
+            Icon buttons include a ripple effect on click using Framer Motion.
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
             {variants.map((variant) => (
               <div
                 className="space-y-2 rounded border p-4"
                 key={`ripple-${variant}`}
               >
                 <h3 className="font-medium capitalize">{variant} Ripple</h3>
-                <Button variant={variant}>Click for Ripple</Button>
-                <Button enableRipple={false} variant={variant}>
-                  No Ripple
-                </Button>
+                <IconButton icon={<Star />} variant={variant} />
+                <IconButton
+                  enableRipple={false}
+                  icon={<Star />}
+                  variant={variant}
+                />
               </div>
             ))}
           </div>
@@ -143,8 +167,7 @@ export default function ButtonDocs() {
         <CardHeader>
           <CardTitle>All Combinations</CardTitle>
           <CardDescription>
-            A comprehensive grid showing every possible combination of variant,
-            size, and shape, grouped by variant.
+            A grid showing combinations of variant, size, shape, and width.
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -153,18 +176,24 @@ export default function ButtonDocs() {
               <h3 className="mb-4 border-b pb-2 font-semibold text-xl capitalize">
                 {variant}
               </h3>
-              <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
                 {sizes.map((size) =>
-                  shapes.map((shape) => (
-                    <div
-                      className="space-y-1 rounded border p-2"
-                      key={`${variant}-${size}-${shape}`}
-                    >
-                      <Button shape={shape} size={size} variant={variant}>
-                        {size} {shape}
-                      </Button>
-                    </div>
-                  ))
+                  shapes.map((shape) =>
+                    widths.map((width) => (
+                      <div
+                        className="space-y-1 rounded border p-2"
+                        key={`${variant}-${size}-${shape}-${width}`}
+                      >
+                        <IconButton
+                          icon={<Star />}
+                          shape={shape}
+                          size={size}
+                          variant={variant}
+                          width={width}
+                        />
+                      </div>
+                    ))
+                  )
                 )}
               </div>
             </div>
@@ -176,25 +205,25 @@ export default function ButtonDocs() {
 
       <Card>
         <CardHeader>
-          <CardTitle>Toggle Buttons</CardTitle>
+          <CardTitle>Toggle Icon Buttons</CardTitle>
           <CardDescription>
-            Toggle buttons with default and selected states, using
-            buttonType="toggle".
+            Toggle buttons with unselected and selected states.
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
             {toggleVariants.map((variant) => (
               <div className="space-y-2 rounded border p-4" key={variant}>
                 <h3 className="font-medium capitalize">{variant} Toggle</h3>
-                <Button
+                <IconButton
                   buttonType="toggle"
                   data-state={toggleChecked ? "checked" : "unchecked"}
+                  icon={
+                    <Heart fill={toggleChecked ? "currentColor" : "none"} />
+                  }
                   onClick={() => setToggleChecked(!toggleChecked)}
                   variant={variant}
-                >
-                  {variant} {toggleChecked ? "Selected" : "Unselected"}
-                </Button>
+                />
               </div>
             ))}
           </div>
