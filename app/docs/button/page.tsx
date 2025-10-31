@@ -200,6 +200,64 @@ export default function ButtonDocs() {
           </div>
         </CardContent>
       </Card>
+
+      <hr className="my-8" />
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Disabled States</CardTitle>
+          <CardDescription>
+            Disabled buttons show reduced opacity for container (10%) and
+            content (38%), with no elevation or interactions, per M3
+            specifications.
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {variants.map((variant) => (
+              <div className="space-y-3 rounded border p-4" key={variant}>
+                <h3 className="font-medium capitalize">{variant} Disabled</h3>
+                <Button variant={variant}>Enabled {variant}</Button>
+                <Button disabled variant={variant}>
+                  Disabled {variant}
+                </Button>
+                <p className="text-muted-foreground text-sm">
+                  Enabled vs disabled appearance.
+                </p>
+              </div>
+            ))}
+          </div>
+
+          <hr className="my-8" />
+
+          <h3 className="mb-4 font-semibold text-xl">Toggle Disabled States</h3>
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+            {toggleVariants.map((variant) => (
+              <div className="space-y-2 rounded border p-4" key={variant}>
+                <h4 className="font-medium capitalize">
+                  {variant} Toggle Disabled
+                </h4>
+                <Button
+                  buttonType="toggle"
+                  data-state="unchecked"
+                  disabled
+                  variant={variant}
+                >
+                  Disabled Unselected
+                </Button>
+                <Button
+                  buttonType="toggle"
+                  data-state="checked"
+                  disabled
+                  variant={variant}
+                >
+                  Disabled Selected
+                </Button>
+              </div>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 }

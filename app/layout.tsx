@@ -80,6 +80,11 @@ export default function RootLayout({
                       <Link href="/docs/menu">Menu</Link>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
+                  <SidebarMenuItem>
+                    <SidebarMenuButton asChild>
+                      <Link href="/docs/progress">Progress</Link>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
                 </SidebarMenu>
               </SidebarContent>
             </Sidebar>

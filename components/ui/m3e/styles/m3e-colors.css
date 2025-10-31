@@ -170,3 +170,127 @@
   /* Example: make it narrower */
   width: 80px;
 }
+
+/* Progress Indicator Animations */
+
+/* Progress Component Styles */
+[data-slot="progress-linear-track"] {
+  border-radius: 9999px;
+  overflow: visible;
+  position: relative;
+}
+
+[data-slot="progress-linear-track"][data-variant="flat"][data-thickness="default"] {
+  height: 4px;
+  min-height: 4px;
+}
+
+[data-slot="progress-linear-track"][data-variant="flat"][data-thickness="thick"] {
+  height: 8px;
+  min-height: 8px;
+}
+
+[data-slot="progress-linear-track"][data-variant="wavy"][data-thickness="default"] {
+  height: 10px;
+  min-height: 10px;
+}
+
+[data-slot="progress-linear-track"][data-variant="wavy"][data-thickness="thick"] {
+  height: 14px;
+  min-height: 14px;
+}
+
+[data-slot="progress-linear-indicator"] {
+  background-color: var(--md3-primary);
+  border-radius: 9999px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  transition: width 0.2s ease;
+}
+
+[data-slot="progress-linear-indicator"][data-variant="wavy"] {
+  border-radius: 0;
+}
+
+[data-slot="progress-linear-buffer"] {
+  background-color: var(--md3-primary-container);
+  border-radius: 9999px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  transition: width 0.2s ease;
+}
+
+[data-slot="progress-linear-buffer"][data-variant="wavy"] {
+  border-radius: 0;
+}
+
+[data-slot="progress-linear-stop-indicator"] {
+  background-color: var(--md3-primary);
+  border-radius: 50%;
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 4px;
+  height: 4px;
+  z-index: 10;
+  box-shadow: 0 0 0 1px var(--md3-on-primary);
+}
+
+[data-slot="progress-linear-stop-indicator"][data-thickness="thick"] {
+  width: 8px;
+  height: 8px;
+}
+
+/* Four-Color Animation */
+@keyframes progress-four-color-cycle {
+  0% {
+    background-color: var(--md3-primary);
+    stroke: var(--md3-primary);
+  }
+  25% {
+    background-color: var(--md3-primary-container);
+    stroke: var(--md3-primary-container);
+  }
+  50% {
+    background-color: var(--md3-tertiary);
+    stroke: var(--md3-tertiary);
+  }
+  75% {
+    background-color: var(--md3-tertiary-container);
+    stroke: var(--md3-tertiary-container);
+  }
+  100% {
+    background-color: var(--md3-primary);
+    stroke: var(--md3-primary);
+  }
+}
+
+.progress-linear-four-color[data-four-color="true"] {
+  animation: progress-four-color-cycle 8s ease-in-out infinite;
+}
+
+.progress-circular-four-color[data-four-color="true"] {
+  animation: progress-four-color-cycle 6s ease-in-out infinite;
+}
+
+/* Circular Progress Styles */
+[data-slot="progress-circular-svg"] {
+  display: block;
+}
+
+[data-slot="progress-circular-track"] {
+  stroke: var(--md3-surface-container-highest);
+  fill: none;
+}
+
+[data-slot="progress-circular-indicator"] {
+  stroke: var(--md3-primary);
+  fill: none;
+  stroke-linecap: round;
+  transform-origin: center;
+  transition: stroke-dashoffset 0.2s ease;
+}
