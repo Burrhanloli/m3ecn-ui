@@ -32,7 +32,7 @@ const getCornerRadius = (
 };
 
 const buttonVariants = cva(
-  "relative inline-flex shrink-0 items-center justify-center gap-[8px] overflow-hidden whitespace-nowrap font-medium text-sm outline-none before:absolute before:inset-0 before:opacity-0 hover:before:opacity-8 focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-secondary focus-visible:ring-offset-2 active:scale-96 active:before:opacity-10 disabled:pointer-events-none disabled:shadow-none disabled:active:scale-100 aria-invalid:border-destructive aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 [&_svg:not([class*='size-'])]:size-4 [&_svg]:pointer-events-none [&_svg]:shrink-0",
+  "relative inline-flex shrink-0 items-center justify-center gap-[8px] overflow-hidden whitespace-nowrap font-medium text-sm outline-none before:absolute before:inset-0 before:opacity-0 hover:before:opacity-8 focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-secondary focus-visible:ring-offset-2 active:scale-96 active:before:opacity-10 disabled:pointer-events-none disabled:shadow-none disabled:active:scale-100 aria-invalid:border-destructive aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 [&_svg]:pointer-events-none [&_svg]:shrink-0",
   {
     variants: {
       variant: {

@@ -34,7 +34,7 @@ function MenuContent({
     <DropdownMenuPrimitive.Portal>
       <DropdownMenuPrimitive.Content
         className={cn(
-          "data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 z-50 min-w-28 max-w-70 origin-(--radix-dropdown-menu-content-transform-origin) overflow-y-auto overflow-x-hidden rounded-md border bg-surface-container p-1 text-on-surface shadow-md data-[state=closed]:animate-out data-[state=open]:animate-in",
+          "data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 z-50 min-w-28 max-w-70 origin-(--radix-dropdown-menu-content-transform-origin) overflow-y-auto overflow-x-hidden rounded-2xl border bg-surface-container p-1 text-on-surface shadow-md data-[state=closed]:animate-out data-[state=open]:animate-in",
           className
         )}
         data-slot="menu-content"
@@ -63,7 +63,7 @@ function MenuItem({
   return (
     <DropdownMenuPrimitive.Item
       className={cn(
-        "relative flex h-12 cursor-default select-none items-center gap-2 px-3 py-0 text-sm outline-hidden focus:bg-on-surface/8 focus:text-on-surface data-disabled:pointer-events-none data-inset:pl-8 data-[variant=destructive]:text-error data-disabled:opacity-50 data-[variant=destructive]:focus:bg-error/10 data-[variant=destructive]:focus:text-error dark:data-[variant=destructive]:focus:bg-error/20 [&_svg:not([class*='size-'])]:size-6 [&_svg:not([class*='text-'])]:text-on-surface-variant [&_svg]:pointer-events-none [&_svg]:shrink-0 data-[variant=destructive]:*:[svg]:text-error!",
+        "relative flex h-12 cursor-default select-none items-center gap-2 px-3 py-0 text-sm outline-hidden hover:rounded-lg focus:bg-on-surface/8 focus:text-on-surface data-disabled:pointer-events-none data-inset:pl-8 data-[variant=destructive]:text-error data-disabled:opacity-50 data-[variant=destructive]:focus:bg-error/10 data-[variant=destructive]:focus:text-error dark:data-[variant=destructive]:focus:bg-error/20 [&_svg:not([class*='size-'])]:size-6 [&_svg:not([class*='text-'])]:text-on-surface-variant [&_svg]:pointer-events-none [&_svg]:shrink-0 data-[variant=destructive]:*:[svg]:text-error!",
         className
       )}
       data-inset={inset}
@@ -84,7 +84,7 @@ function MenuCheckboxItem({
     <DropdownMenuPrimitive.CheckboxItem
       checked={checked}
       className={cn(
-        "relative flex h-12 cursor-default select-none items-center gap-2 px-3 py-0 pr-2 pl-8 text-sm outline-hidden focus:bg-on-surface/8 focus:text-on-surface data-disabled:pointer-events-none data-disabled:opacity-50 [&_svg:not([class*='size-'])]:size-6 [&_svg]:pointer-events-none [&_svg]:shrink-0",
+        "relative flex h-12 cursor-default select-none items-center gap-2 px-3 py-0 pr-2 pl-8 text-sm outline-hidden hover:rounded-lg focus:bg-on-surface/8 focus:text-on-surface data-disabled:pointer-events-none data-disabled:opacity-50 [&_svg:not([class*='size-'])]:size-6 [&_svg]:pointer-events-none [&_svg]:shrink-0",
         className
       )}
       data-slot="menu-checkbox-item"
@@ -116,7 +116,7 @@ function MenuRadioItem({
   return (
     <DropdownMenuPrimitive.RadioItem
       className={cn(
-        "relative flex h-12 cursor-default select-none items-center gap-2 px-3 py-0 pr-2 pl-8 text-sm outline-hidden focus:bg-on-surface/8 focus:text-on-surface data-disabled:pointer-events-none data-disabled:opacity-50 [&_svg:not([class*='size-'])]:size-6 [&_svg]:pointer-events-none [&_svg]:shrink-0",
+        "relative flex h-12 cursor-default select-none items-center gap-2 px-3 py-0 pr-2 pl-8 text-sm outline-hidden hover:rounded-lg focus:bg-on-surface/8 focus:text-on-surface data-disabled:pointer-events-none data-disabled:opacity-50 [&_svg:not([class*='size-'])]:size-6 [&_svg]:pointer-events-none [&_svg]:shrink-0",
         className
       )}
       data-slot="menu-radio-item"
@@ -215,7 +215,7 @@ function MenuSubContent({
   return (
     <DropdownMenuPrimitive.SubContent
       className={cn(
-        "data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 z-50 min-w-28 origin-(--radix-dropdown-menu-content-transform-origin) overflow-hidden rounded-md border bg-surface-container p-1 text-on-surface shadow-lg data-[state=closed]:animate-out data-[state=open]:animate-in",
+        "data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 z-50 min-w-28 origin-(--radix-dropdown-menu-content-transform-origin) overflow-hidden rounded-2xl border bg-surface-container p-1 text-on-surface shadow-lg data-[state=closed]:animate-out data-[state=open]:animate-in",
         className
       )}
       data-slot="menu-sub-content"
