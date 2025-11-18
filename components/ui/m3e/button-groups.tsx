@@ -7,6 +7,45 @@ import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
 import "@/components/ui/m3e/styles/m3e-colors.css";
 
+const getCornerRadius = (
+  size: string,
+  position: "first" | "last"
+): React.CSSProperties => {
+  const radii = {
+    xs: "8px",
+    s: "8px",
+    m: "12px",
+    l: "12px",
+    xl: "12px",
+  };
+
+  const roundRadii = {
+    xs: "20px",
+    s: "20px",
+    m: "28px",
+    l: "52px",
+    xl: "68px",
+  };
+
+  const radius = radii[size as keyof typeof radii] ?? "12px";
+  const roundRadius = roundRadii[size as keyof typeof roundRadii] ?? "24px";
+
+  if (position === "first") {
+    return {
+      borderTopLeftRadius: roundRadius,
+      borderBottomLeftRadius: roundRadius,
+      borderTopRightRadius: radius,
+      borderBottomRightRadius: radius,
+    };
+  }
+  return {
+    borderTopLeftRadius: radius,
+    borderBottomLeftRadius: radius,
+    borderTopRightRadius: roundRadius,
+    borderBottomRightRadius: roundRadius,
+  };
+};
+
 const buttonGroupVariants = cva("flex flex-row items-stretch", {
   variants: {
     type: {
@@ -54,47 +93,9 @@ function ButtonGroup({
   onChange,
   ...props
 }: ButtonGroupProps) {
-  const getConnectedRadii = (
-    position: "first" | "middle" | "last"
-  ): React.CSSProperties => {
-    const radii = {
-      xs: "8px",
-      s: "8px",
-      m: "12px",
-      l: "12px",
-      xl: "12px",
-    };
-
-    const roundRadii = {
-      xs: "16px",
-      s: "16px",
-      m: "24px",
-      l: "24px",
-      xl: "24px",
-    };
-    const radius = radii[size as keyof typeof radii] ?? "12px";
-    const roundRadius = roundRadii[size as keyof typeof roundRadii] ?? "24px";
-
-    let style: React.CSSProperties = {};
-
-    if (position === "first") {
-      style = {
-        borderTopLeftRadius: roundRadius,
-        borderBottomLeftRadius: roundRadius,
-        borderTopRightRadius: radius,
-        borderBottomRightRadius: radius,
-      };
-    } else if (position === "last") {
-      style = {
-        borderTopLeftRadius: radius,
-        borderBottomLeftRadius: radius,
-        borderTopRightRadius: roundRadius,
-        borderBottomRightRadius: roundRadius,
-      };
-    }
-
-    return style;
-  };
+  const [animating, setAnimating] = React.useState<
+    Record<number, "grow" | "shrink">
+  >({});
 
   const gapClass = (() => {
     if (type === "connected") {
@@ -123,16 +124,16 @@ function ButtonGroup({
 
       // Determine position for connected type
       let connectedStyle: React.CSSProperties = {};
-      if (type === "connected") {
-        const position =
-          childrenArray.length === 1
+      const position =
+        childrenArray.length === 1
+          ? "first"
+          : index === 0
             ? "first"
-            : index === 0
-              ? "first"
-              : index === childrenArray.length - 1
-                ? "last"
-                : "middle";
-        connectedStyle = getConnectedRadii(position);
+            : index === childrenArray.length - 1
+              ? "last"
+              : "middle";
+      if (type === "connected" && shape === "round" && position !== "middle") {
+        connectedStyle = getCornerRadius(size ?? "s", position);
       }
 
       // Determine selection state
@@ -142,34 +143,77 @@ function ButtonGroup({
           : Array.isArray(value) && value.includes(childValue);
 
       const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+        let newValue: string | string[] | null = value ?? null;
+        if (selection === "single") {
+          newValue = isSelected ? null : childValue;
+        } else {
+          const current = Array.isArray(value) ? value : [];
+          newValue = isSelected
+            ? current.filter((v: string) => v !== childValue)
+            : [...current, childValue];
+        }
         if (onChange) {
-          if (selection === "single") {
-            onChange(isSelected ? null : childValue);
-          } else {
-            const current = Array.isArray(value) ? value : [];
-            const newValue = isSelected
-              ? current.filter((v: string) => v !== childValue)
-              : [...current, childValue];
-            onChange(newValue);
-          }
+          onChange(newValue);
         }
         if (childProps.onClick) {
           childProps.onClick(event);
         }
       };
 
-      const finalStyle =
-        type === "connected" && !isSelected && shape !== "round"
-          ? { ...(childProps.style || {}), ...connectedStyle }
-          : childProps.style || {};
+      const handleMouseDown = (_: React.MouseEvent<HTMLButtonElement>) => {
+        if (type === "standard") {
+          const anim: Record<number, "grow" | "shrink"> = {};
+          anim[index] = "grow";
+          if (index > 0) {
+            anim[index - 1] = "shrink";
+          }
+          if (index < childrenArray.length - 1) {
+            anim[index + 1] = "shrink";
+          }
+          setAnimating(anim);
+        }
+      };
+
+      const handleMouseUp = () => {
+        if (type === "standard") {
+          setAnimating({});
+        }
+      };
+
+      let finalStyle: React.CSSProperties = childProps.style || {};
+      if (type === "connected" && !isSelected) {
+        finalStyle = { ...finalStyle, ...connectedStyle };
+      }
+      if (type === "standard" || type === "connected") {
+        finalStyle = {
+          ...finalStyle,
+          flexGrow: isSelected
+            ? 1.15
+            : type === "standard" && animating[index] === "grow"
+              ? 1.15
+              : type === "standard" && animating[index] === "shrink"
+                ? 0.9
+                : 1,
+          flexShrink: 1,
+          flexBasis: "auto",
+        };
+        if (type === "standard") {
+          finalStyle = {
+            ...finalStyle,
+            transition: "flex-grow 0.1s ease-in-out",
+          };
+        }
+      }
 
       return React.cloneElement(child, {
         size: size ?? "s",
-        shape: shape ?? "square",
+        shape: type === "connected" ? "square" : (shape ?? "square"),
         style: finalStyle,
         className: cn(childProps.className, "self-center"),
         "data-state": isSelected ? "checked" : undefined,
         onClick: handleClick,
+        onMouseDown: handleMouseDown,
+        onMouseUp: handleMouseUp,
         buttonType: "toggle",
         variant: childProps.variant ?? "tonal",
         ...childProps,
@@ -220,7 +264,7 @@ function ButtonGroupSeparator({
   return (
     <Separator
       className={cn(
-        "!m-0 relative self-stretch bg-input data-[orientation=vertical]:h-auto",
+        "relative m-0! self-stretch bg-input data-[orientation=vertical]:h-auto",
         className
       )}
       data-slot="button-group-separator"

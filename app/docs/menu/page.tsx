@@ -131,7 +131,7 @@ export default function MenuDocs() {
               <Menu>
                 <MenuTrigger asChild>
                   <Button>
-                    <Settings className="mr-2 size-4" />
+                    <Settings />
                     Account
                   </Button>
                 </MenuTrigger>
@@ -399,7 +399,7 @@ export default function MenuDocs() {
               <Menu>
                 <MenuTrigger asChild>
                   <Button>
-                    <Settings className="mr-2 size-4" />
+                    <Settings />
                     Menu
                   </Button>
                 </MenuTrigger>

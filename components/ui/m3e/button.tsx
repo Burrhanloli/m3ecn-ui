@@ -1,6 +1,6 @@
 import { Slot } from "@radix-ui/react-slot";
 import { cva, type VariantProps } from "class-variance-authority";
-import { type HTMLMotionProps, motion, type Transition } from "framer-motion";
+import { type HTMLMotionProps, motion } from "framer-motion";
 import * as React from "react";
 import { cn } from "@/lib/utils";
 import "@/components/ui/m3e/styles/m3e-colors.css";
@@ -32,7 +32,7 @@ const getCornerRadius = (
 };
 
 const buttonVariants = cva(
-  "relative inline-flex shrink-0 items-center justify-center gap-2 overflow-hidden whitespace-nowrap font-medium text-sm outline-none transition-[border-radius] transition-all duration-100 duration-100 before:absolute before:inset-0 before:opacity-0 before:transition-opacity before:duration-200 hover:before:opacity-8 focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-secondary focus-visible:ring-offset-2 active:scale-96 active:before:opacity-10 disabled:pointer-events-none disabled:shadow-none disabled:active:scale-100 aria-invalid:border-destructive aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 [&_svg:not([class*='size-'])]:size-4 [&_svg]:pointer-events-none [&_svg]:shrink-0",
+  "relative inline-flex shrink-0 items-center justify-center gap-[8px] overflow-hidden whitespace-nowrap font-medium text-sm outline-none before:absolute before:inset-0 before:opacity-0 hover:before:opacity-8 focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-secondary focus-visible:ring-offset-2 active:scale-96 active:before:opacity-10 disabled:pointer-events-none disabled:shadow-none disabled:active:scale-100 aria-invalid:border-destructive aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 [&_svg:not([class*='size-'])]:size-4 [&_svg]:pointer-events-none [&_svg]:shrink-0",
   {
     variants: {
       variant: {
@@ -47,11 +47,11 @@ const buttonVariants = cva(
           "bg-surface-container-low text-primary shadow-md hover:shadow-lg hover:before:bg-primary/8 focus-visible:ring-secondary/20 active:shadow-none active:before:bg-primary/10 disabled:bg-on-surface/10 disabled:text-on-surface/38 data-[button-type=toggle]:data-[state=checked]:bg-primary data-[button-type=toggle]:data-[state=checked]:text-on-primary data-[button-type=toggle]:data-[state=checked]:shadow-md data-[button-type=toggle]:data-[state=checked]:active:shadow-none data-[button-type=toggle]:data-[state=checked]:hover:shadow-lg data-[button-type=toggle]:data-[state=checked]:active:before:bg-on-primary/10 data-[button-type=toggle]:data-[state=checked]:hover:before:bg-on-primary/8",
       },
       size: {
-        xs: "h-8 px-3 has-[>svg]:px-2",
-        s: "h-9 px-4 has-[>svg]:px-3",
-        m: "h-10 px-4 has-[>svg]:px-3",
-        l: "h-12 px-6 has-[>svg]:px-4",
-        xl: "h-14 px-8 has-[>svg]:px-6",
+        xs: "h-[32px] px-[12px] text-[18px] leading-[26px] [&_svg:not([class*='size-'])]:size-[20px]",
+        s: "h-[40px] px-[16px] text-[18px] leading-[26px] [&_svg:not([class*='size-'])]:size-[20px]",
+        m: "h-[56px] px-[24px] text-[21px] leading-[32px] [&_svg:not([class*='size-'])]:size-[24px]",
+        l: "h-[96px] px-[48px] text-[32px] leading-[42px] [&_svg:not([class*='size-'])]:size-[32px]",
+        xl: "h-[136px] px-[64px] text-[42px] leading-[53px] [&_svg:not([class*='size-'])]:size-[40px]",
       },
       shape: {
         round: "rounded-full",
@@ -66,41 +66,11 @@ const buttonVariants = cva(
   }
 );
 
-const rippleVariants = cva("pointer-events-none absolute size-5 rounded-full", {
-  variants: {
-    variant: {
-      filled:
-        "data-[button-type=toggle]:data-[state=checked]:bg-on-primary/30 data-[button-type=default]:bg-on-primary/30 data-[button-type=toggle]:not([data-state=checked]):bg-on-surface-variant/30",
-      outlined:
-        "bg-on-surface-variant/30 data-[button-type=toggle]:data-[state=checked]:bg-inverse-on-surface/30",
-      text: "bg-primary/30",
-      tonal:
-        "bg-on-secondary-container/30 data-[button-type=toggle]:data-[state=checked]:bg-on-secondary/30",
-      elevated:
-        "bg-primary/30 data-[button-type=toggle]:data-[state=checked]:bg-on-primary/30",
-    },
-  },
-  defaultVariants: {
-    variant: "filled",
-  },
-});
-
-type Ripple = {
-  id: number;
-  x: number;
-  y: number;
-};
-
-const RIPPLE_DURATION = 600;
-
 type ButtonProps = React.ComponentProps<"button"> &
   VariantProps<typeof buttonVariants> & {
     asChild?: boolean;
     "data-state"?: string;
     buttonType?: "default" | "toggle";
-    enableRipple?: boolean;
-    rippleScale?: number;
-    rippleTransition?: Transition;
   };
 
 function Button({
@@ -110,50 +80,15 @@ function Button({
   shape,
   buttonType = "default",
   asChild = false,
-  enableRipple = true,
-  rippleScale = 10,
-  rippleTransition = { duration: 0.6, ease: "easeOut" },
   ...props
 }: ButtonProps) {
-  const [ripples, setRipples] = React.useState<Ripple[]>([]);
-  const buttonRef = React.useRef<HTMLButtonElement>(null);
-
-  const createRipple = React.useCallback(
-    (event: React.MouseEvent<HTMLButtonElement>) => {
-      const button = buttonRef.current;
-      if (!button) {
-        return;
-      }
-
-      const rect = button.getBoundingClientRect();
-      const x = event.clientX - rect.left;
-      const y = event.clientY - rect.top;
-
-      const newRipple: Ripple = {
-        id: Date.now(),
-        x,
-        y,
-      };
-
-      setRipples((prev) => [...prev, newRipple]);
-
-      setTimeout(() => {
-        setRipples((prev) => prev.filter((r) => r.id !== newRipple.id));
-      }, RIPPLE_DURATION);
-    },
-    []
-  );
-
   const handleClick = React.useCallback(
     (event: React.MouseEvent<HTMLButtonElement>) => {
-      if (enableRipple && !asChild && !props.disabled) {
-        createRipple(event);
-      }
       if (props.onClick) {
         props.onClick(event);
       }
     },
-    [createRipple, enableRipple, asChild, props.onClick, props.disabled]
+    [props.onClick]
   );
 
   const isSelected =
@@ -175,45 +110,12 @@ function Button({
     return <Slot className={buttonClass} data-slot="button" {...props} />;
   }
 
-  if (enableRipple) {
-    return (
-      <motion.button
-        className={buttonClass}
-        data-button-type={buttonType}
-        data-slot="button"
-        onClick={handleClick}
-        ref={buttonRef}
-        transition={{
-          duration: 0.35,
-          ease: [0.2, 0.0, 0, 1.0],
-        }}
-        {...(props as HTMLMotionProps<"button">)}
-      >
-        {props.children}
-        {ripples.map((ripple) => (
-          <motion.span
-            animate={{ scale: rippleScale, opacity: 0 }}
-            className={cn(rippleVariants({ variant }))}
-            initial={{ scale: 0, opacity: 0.5 }}
-            key={ripple.id}
-            style={{
-              top: ripple.y - 10,
-              left: ripple.x - 10,
-            }}
-            transition={rippleTransition}
-          />
-        ))}
-      </motion.button>
-    );
-  }
-
   return (
     <motion.button
       className={buttonClass}
       data-button-type={buttonType}
       data-slot="button"
       onClick={handleClick}
-      ref={buttonRef}
       transition={{
         duration: 0.35,
         ease: [0.2, 0.0, 0, 1.0],

@@ -1,5 +1,10 @@
 "use client";
 
+import { Check, Copy, Star } from "lucide-react";
+import { useState } from "react";
+import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
+import { oneDark } from "react-syntax-highlighter/dist/esm/styles/prism";
+import { Button as UIButton } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -7,6 +12,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { Label } from "@/components/ui/label";
 import { MenuItem } from "@/components/ui/m3e/menu";
 import {
   SplitButton,
@@ -14,10 +20,37 @@ import {
   SplitButtonMenu,
   SplitButtonTrailing,
 } from "@/components/ui/m3e/split-button";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 export default function SplitButtonDocs() {
+  const [variant, setVariant] = useState("filled");
+  const [size, setSize] = useState("m");
+  const [copied, setCopied] = useState(false);
+
   const variants = ["filled", "outlined", "tonal", "elevated"] as const;
   const sizes = ["xs", "s", "m", "l", "xl"] as const;
+
+  const generateCode = () => {
+    let props = `variant="${variant}"`;
+    if (size !== "m") {
+      props += ` size="${size}"`;
+    }
+    return `<SplitButton ${props}>
+  <SplitButtonLeading>Action</SplitButtonLeading>
+  <SplitButtonTrailing />
+  <SplitButtonMenu>
+    <MenuItem>Option 1</MenuItem>
+    <MenuItem>Option 2</MenuItem>
+    <MenuItem>Option 3</MenuItem>
+  </SplitButtonMenu>
+</SplitButton>`;
+  };
 
   return (
     <div className="container mx-auto space-y-8 p-8">
@@ -27,37 +60,68 @@ export default function SplitButtonDocs() {
             M3 Split Button Component Documentation
           </CardTitle>
           <CardDescription className="text-lg">
-            Preview of all variants, sizes, and shapes for the Material Design 3
-            Expressive split button component.
+            Interactive playground and preview of all variants and sizes for the
+            Material Design 3 Expressive split button component.
           </CardDescription>
         </CardHeader>
       </Card>
 
       <Card>
         <CardHeader>
-          <CardTitle>Variants</CardTitle>
+          <CardTitle>Interactive Playground</CardTitle>
           <CardDescription>
-            Explore the different button variants available in M3 Expressive.
+            Configure split button props and see a live preview with generated
+            code snippet.
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {variants.map((variant) => {
-              const descriptions = {
-                filled:
-                  "Filled buttons have the highest emphasis and are used for primary actions that require immediate attention.",
-                outlined:
-                  "Outlined buttons have medium emphasis and are used for secondary actions or important actions that aren't primary.",
-                tonal:
-                  "Tonal buttons have medium emphasis with a subtle background color, providing an alternative to filled buttons in less prominent scenarios.",
-                elevated:
-                  "Elevated buttons include a shadow for depth and are used when buttons need to stand out on layered surfaces.",
-              };
-              return (
-                <div className="space-y-3 rounded border p-4" key={variant}>
-                  <h3 className="font-medium capitalize">{variant}</h3>
-                  <SplitButton variant={variant}>
-                    <SplitButtonLeading>Action</SplitButtonLeading>
+          <div className="grid grid-cols-1 gap-8">
+            <div className="flex flex-wrap gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="variant-select">Variant</Label>
+                <Select onValueChange={setVariant} value={variant}>
+                  <SelectTrigger id="variant-select">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {variants.map((v) => (
+                      <SelectItem key={v} value={v}>
+                        {v}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="size-select">Size</Label>
+                <Select onValueChange={setSize} value={size}>
+                  <SelectTrigger id="size-select">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {sizes.map((s) => (
+                      <SelectItem key={s} value={s}>
+                        {s}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <Label>Preview</Label>
+                <div className="flex justify-center rounded border p-4">
+                  <SplitButton
+                    size={size as "xs" | "s" | "m" | "l" | "xl"}
+                    variant={
+                      variant as "filled" | "outlined" | "tonal" | "elevated"
+                    }
+                  >
+                    <SplitButtonLeading>
+                      <Star />
+                      Action
+                    </SplitButtonLeading>
                     <SplitButtonTrailing />
                     <SplitButtonMenu>
                       <MenuItem>Option 1</MenuItem>
@@ -65,77 +129,38 @@ export default function SplitButtonDocs() {
                       <MenuItem>Option 3</MenuItem>
                     </SplitButtonMenu>
                   </SplitButton>
-                  <p className="text-muted-foreground text-sm">
-                    {descriptions[variant]}
-                  </p>
                 </div>
-              );
-            })}
-          </div>
-        </CardContent>
-      </Card>
-
-      <hr className="my-8" />
-
-      <Card>
-        <CardHeader>
-          <CardTitle>Sizes</CardTitle>
-          <CardDescription>Different sizes from XS to XL.</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-            {sizes.map((size) => (
-              <div className="space-y-2 rounded border p-4" key={size}>
-                <h3 className="font-medium capitalize">{size}</h3>
-                <SplitButton size={size}>
-                  <SplitButtonLeading>Size {size}</SplitButtonLeading>
-                  <SplitButtonTrailing />
-                  <SplitButtonMenu>
-                    <MenuItem>Option 1</MenuItem>
-                    <MenuItem>Option 2</MenuItem>
-                  </SplitButtonMenu>
-                </SplitButton>
               </div>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
-
-      <hr className="my-8" />
-
-      <Card>
-        <CardHeader>
-          <CardTitle>All Combinations</CardTitle>
-          <CardDescription>
-            A comprehensive grid showing every possible combination of variant,
-            size, and shape, grouped by variant.
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          {variants.map((variant) => (
-            <div className="mb-8" key={variant}>
-              <h3 className="mb-4 border-b pb-2 font-semibold text-xl capitalize">
-                {variant}
-              </h3>
-              <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                {sizes.map((size) => (
-                  <div
-                    className="space-y-1 rounded border p-2"
-                    key={`${variant}-${size}`}
+              <div>
+                <div className="flex items-center justify-between">
+                  <Label>Code</Label>
+                  <UIButton
+                    onClick={() => {
+                      navigator.clipboard.writeText(generateCode());
+                      setCopied(true);
+                      setTimeout(() => setCopied(false), 5000);
+                    }}
+                    size="sm"
+                    variant="outline"
                   >
-                    <SplitButton size={size} variant={variant}>
-                      <SplitButtonLeading>{size}</SplitButtonLeading>
-                      <SplitButtonTrailing />
-                      <SplitButtonMenu>
-                        <MenuItem>Opt 1</MenuItem>
-                        <MenuItem>Opt 2</MenuItem>
-                      </SplitButtonMenu>
-                    </SplitButton>
-                  </div>
-                ))}
+                    {copied ? (
+                      <Check className="mr-2 h-4 w-4" />
+                    ) : (
+                      <Copy className="mr-2 h-4 w-4" />
+                    )}
+                    {copied ? "Copied" : "Copy"}
+                  </UIButton>
+                </div>
+                <SyntaxHighlighter
+                  className="rounded"
+                  language="jsx"
+                  style={oneDark}
+                >
+                  {generateCode()}
+                </SyntaxHighlighter>
               </div>
             </div>
-          ))}
+          </div>
         </CardContent>
       </Card>
     </div>

@@ -259,10 +259,10 @@ export default function ButtonGroupsDocs() {
                       multi:
                         "Multi selection enables multiple icon buttons to be selected simultaneously, suitable for choosing multiple options.",
                     };
-                    return (
+                    return shapes.map((shape) => (
                       <div
                         className="mb-3 space-y-3 rounded border p-4"
-                        key={selection}
+                        key={`${selection}-${shape}`}
                       >
                         <h5 className="font-medium capitalize">{selection}</h5>
                         <ButtonGroup
@@ -272,8 +272,7 @@ export default function ButtonGroupsDocs() {
                               : handleMultiChange
                           }
                           selection={selection}
-                          shape="square"
-                          size="l"
+                          shape={shape}
                           type={type}
                           value={
                             selection === "single"
@@ -281,13 +280,9 @@ export default function ButtonGroupsDocs() {
                               : multiSelected
                           }
                         >
-                          <IconButton
-                            icon={<Check />}
-                            value="1"
-                            width="narrow"
-                          />
+                          <IconButton icon={<Check />} value="1" />
                           <IconButton icon={<X />} value="2" />
-                          <IconButton icon={<Heart />} value="3" width="wide" />
+                          <IconButton icon={<Heart />} value="3" />
                         </ButtonGroup>
                         <p className="text-muted-foreground text-sm">
                           {selectionDescriptions[selection]}
@@ -299,7 +294,7 @@ export default function ButtonGroupsDocs() {
                             : (multiSelected.join(", ") ?? "None")}
                         </p>
                       </div>
-                    );
+                    ));
                   })}
                 </div>
               </div>
@@ -324,7 +319,7 @@ export default function ButtonGroupsDocs() {
               {sizes.map((size) => (
                 <div className="mb-4" key={size}>
                   <h4 className="mb-2 font-medium capitalize">{size}</h4>
-                  <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                  <div className="grid grid-cols-1 gap-4 md:grid-cols-1">
                     {shapes.map((shape) => (
                       <div className="space-y-2 rounded border p-2" key={shape}>
                         <ButtonGroup shape={shape} size={size} type={type}>
@@ -341,6 +336,59 @@ export default function ButtonGroupsDocs() {
               ))}
             </div>
           ))}
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Width Control</CardTitle>
+          <CardDescription>
+            Control the width of button groups using wrapper elements.
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-6">
+          <div className="space-y-3">
+            <h3 className="font-medium">Full Width (Default)</h3>
+            <ButtonGroup shape={"square"}>
+              <Button>Button 1</Button>
+              <Button>Button 2</Button>
+              <Button>Button 3</Button>
+            </ButtonGroup>
+            <p className="text-muted-foreground text-sm">
+              Button groups expand to fill the full width of their container by
+              default.
+            </p>
+          </div>
+
+          <div className="space-y-3">
+            <h3 className="font-medium">Restricted Width</h3>
+            <div>
+              <ButtonGroup className="max-w-sm" shape="square">
+                <Button>Button 1</Button>
+                <Button>Button 2</Button>
+                <Button>Button 3</Button>
+              </ButtonGroup>
+            </div>
+            <p className="text-muted-foreground text-sm">
+              Wrap the ButtonGroup in a container with <code>max-w-*</code>{" "}
+              classes to restrict width.
+            </p>
+          </div>
+
+          <div className="space-y-3">
+            <h3 className="font-medium">Centered with Fixed Width</h3>
+            <div className="mx-auto w-80">
+              <ButtonGroup>
+                <Button>Button 1</Button>
+                <Button>Button 2</Button>
+                <Button>Button 3</Button>
+              </ButtonGroup>
+            </div>
+            <p className="text-muted-foreground text-sm">
+              Use <code>w-*</code> and <code>mx-auto</code> for centered
+              fixed-width groups.
+            </p>
+          </div>
         </CardContent>
       </Card>
     </div>

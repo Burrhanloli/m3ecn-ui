@@ -1,7 +1,10 @@
 "use client";
 
-import { Heart, Star } from "lucide-react";
+import { Check, Copy, Star } from "lucide-react";
 import { useState } from "react";
+import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
+import { oneDark } from "react-syntax-highlighter/dist/esm/styles/prism";
+import { Button as UIButton } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -9,16 +12,52 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Label } from "@/components/ui/label";
 import { IconButton } from "@/components/ui/m3e/icon-button";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Switch } from "@/components/ui/switch";
 
 export default function IconButtonDocs() {
+  const [variant, setVariant] = useState("filled");
+  const [size, setSize] = useState("m");
+  const [shape, setShape] = useState("round");
+  const [width, setWidth] = useState("default");
+  const [buttonType, setButtonType] = useState<"default" | "toggle">("default");
+  const [disabled, setDisabled] = useState(false);
   const [toggleChecked, setToggleChecked] = useState(false);
+  const [copied, setCopied] = useState(false);
 
   const variants = ["filled", "outlined", "standard", "tonal"] as const;
   const sizes = ["xs", "s", "m", "l", "xl"] as const;
   const shapes = ["round", "square"] as const;
   const widths = ["narrow", "default", "wide"] as const;
-  const toggleVariants = ["filled", "outlined", "tonal"] as const;
+
+  const generateCode = () => {
+    let props = `icon={<Star />} variant="${variant}"`;
+    if (size !== "m") {
+      props += ` size="${size}"`;
+    }
+    if (shape !== "round") {
+      props += ` shape="${shape}"`;
+    }
+    if (width !== "default") {
+      props += ` width="${width}"`;
+    }
+    if (buttonType === "toggle") {
+      props += ` buttonType="toggle" data-state="${toggleChecked ? "checked" : "unchecked"}"`;
+    }
+    if (disabled) {
+      props += " disabled";
+    }
+    return `<IconButton ${props} />`;
+  };
 
   return (
     <div className="container mx-auto space-y-8 p-8">
@@ -28,204 +67,171 @@ export default function IconButtonDocs() {
             M3 Icon Button Component Documentation
           </CardTitle>
           <CardDescription className="text-lg">
-            Preview of all variants, sizes, shapes, and widths for the Material
-            Design 3 Expressive icon button component.
+            Interactive playground and preview of all variants, sizes, shapes,
+            and widths for the Material Design 3 Expressive icon button
+            component.
           </CardDescription>
         </CardHeader>
       </Card>
 
       <Card>
         <CardHeader>
-          <CardTitle>Variants</CardTitle>
+          <CardTitle>Interactive Playground</CardTitle>
           <CardDescription>
-            Explore the different icon button variants available in M3
-            Expressive.
+            Configure icon button props and see a live preview with generated
+            code snippet.
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
-            {variants.map((variant) => {
-              const descriptions = {
-                filled:
-                  "Filled icon buttons have the highest emphasis and are used for primary actions.",
-                outlined:
-                  "Outlined icon buttons have medium emphasis with a border.",
-                standard:
-                  "Standard icon buttons have no background, used for optional actions.",
-                tonal:
-                  "Tonal icon buttons have a subtle background color for medium emphasis.",
-              };
-              return (
-                <div className="space-y-3 rounded border p-4" key={variant}>
-                  <h3 className="font-medium capitalize">{variant}</h3>
-                  <IconButton icon={<Star />} variant={variant} />
-                  <p className="text-muted-foreground text-sm">
-                    {descriptions[variant]}
-                  </p>
-                </div>
-              );
-            })}
-          </div>
-        </CardContent>
-      </Card>
-
-      <hr className="my-8" />
-
-      <Card>
-        <CardHeader>
-          <CardTitle>Sizes</CardTitle>
-          <CardDescription>
-            Different sizes from XS to XL, with appropriate touch targets.
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-5">
-            {sizes.map((size) => (
-              <div className="space-y-2 rounded border p-4" key={size}>
-                <h3 className="font-medium capitalize">{size}</h3>
-                <IconButton icon={<Star />} size={size} />
+          <div className="grid grid-cols-1 gap-8">
+            <div className="flex flex-wrap gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="variant-select">Variant</Label>
+                <Select onValueChange={setVariant} value={variant}>
+                  <SelectTrigger id="variant-select">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {variants.map((v) => (
+                      <SelectItem key={v} value={v}>
+                        {v}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
-
-      <hr className="my-8" />
-
-      <Card>
-        <CardHeader>
-          <CardTitle>Shapes</CardTitle>
-          <CardDescription>
-            Round (fully rounded) and Square shapes with dynamic corner radii.
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-            {shapes.map((shape) => (
-              <div className="space-y-2 rounded border p-4" key={shape}>
-                <h3 className="font-medium capitalize">{shape}</h3>
-                <IconButton icon={<Star />} shape={shape} />
+              <div className="space-y-2">
+                <Label htmlFor="size-select">Size</Label>
+                <Select onValueChange={setSize} value={size}>
+                  <SelectTrigger id="size-select">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {sizes.map((s) => (
+                      <SelectItem key={s} value={s}>
+                        {s}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
-
-      <hr className="my-8" />
-
-      <Card>
-        <CardHeader>
-          <CardTitle>Widths</CardTitle>
-          <CardDescription>
-            Narrow, Default, and Wide spacing around the icon.
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-            {widths.map((width) => (
-              <div className="space-y-2 rounded border p-4" key={width}>
-                <h3 className="font-medium capitalize">{width}</h3>
-                <IconButton icon={<Star />} shape="square" width={width} />
+              <div className="space-y-2">
+                <Label htmlFor="shape-select">Shape</Label>
+                <Select onValueChange={setShape} value={shape}>
+                  <SelectTrigger id="shape-select">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {shapes.map((sh) => (
+                      <SelectItem key={sh} value={sh}>
+                        {sh}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
-
-      <hr className="my-8" />
-
-      <Card>
-        <CardHeader>
-          <CardTitle>Ripple Effect</CardTitle>
-          <CardDescription>
-            Icon buttons include a ripple effect on click using Framer Motion.
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
-            {variants.map((variant) => (
-              <div
-                className="space-y-2 rounded border p-4"
-                key={`ripple-${variant}`}
-              >
-                <h3 className="font-medium capitalize">{variant} Ripple</h3>
-                <IconButton icon={<Star />} variant={variant} />
-                <IconButton
-                  enableRipple={false}
-                  icon={<Star />}
-                  variant={variant}
+              <div className="space-y-2">
+                <Label htmlFor="width-select">Width</Label>
+                <Select onValueChange={setWidth} value={width}>
+                  <SelectTrigger id="width-select">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {widths.map((w) => (
+                      <SelectItem key={w} value={w}>
+                        {w}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="flex items-center space-x-2">
+                <Switch
+                  checked={buttonType === "toggle"}
+                  id="button-type"
+                  onCheckedChange={(checked) =>
+                    setButtonType(checked ? "toggle" : "default")
+                  }
                 />
+                <Label htmlFor="button-type">Toggle Button</Label>
               </div>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
-
-      <hr className="my-8" />
-
-      <Card>
-        <CardHeader>
-          <CardTitle>All Combinations</CardTitle>
-          <CardDescription>
-            A grid showing combinations of variant, size, shape, and width.
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          {variants.map((variant) => (
-            <div className="mb-8" key={variant}>
-              <h3 className="mb-4 border-b pb-2 font-semibold text-xl capitalize">
-                {variant}
-              </h3>
-              <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-                {sizes.map((size) =>
-                  shapes.map((shape) =>
-                    widths.map((width) => (
-                      <div
-                        className="space-y-1 rounded border p-2"
-                        key={`${variant}-${size}-${shape}-${width}`}
-                      >
-                        <IconButton
-                          icon={<Star />}
-                          shape={shape}
-                          size={size}
-                          variant={variant}
-                          width={width}
-                        />
-                      </div>
-                    ))
-                  )
-                )}
+              <div className="flex items-center space-x-2">
+                <Checkbox
+                  checked={disabled}
+                  id="disabled"
+                  onCheckedChange={(checked) => setDisabled(checked === true)}
+                />
+                <Label htmlFor="disabled">Disabled</Label>
+              </div>
+              {buttonType === "toggle" && (
+                <div className="flex items-center space-x-2">
+                  <Switch
+                    checked={toggleChecked}
+                    id="toggle-checked"
+                    onCheckedChange={setToggleChecked}
+                  />
+                  <Label htmlFor="toggle-checked">Checked</Label>
+                </div>
+              )}
+            </div>
+            <div className="space-y-4">
+              <div>
+                <Label>Preview</Label>
+                <div className="flex justify-center rounded border p-4">
+                  <IconButton
+                    buttonType={buttonType}
+                    data-state={
+                      buttonType === "toggle"
+                        ? toggleChecked
+                          ? "checked"
+                          : "unchecked"
+                        : undefined
+                    }
+                    disabled={disabled}
+                    icon={<Star />}
+                    onClick={
+                      buttonType === "toggle"
+                        ? () => setToggleChecked(!toggleChecked)
+                        : undefined
+                    }
+                    shape={shape as "round" | "square"}
+                    size={size as "xs" | "s" | "m" | "l" | "xl"}
+                    variant={
+                      variant as "filled" | "outlined" | "standard" | "tonal"
+                    }
+                    width={width as "narrow" | "default" | "wide"}
+                  />
+                </div>
+              </div>
+              <div>
+                <div className="flex items-center justify-between">
+                  <Label>Code</Label>
+                  <UIButton
+                    onClick={() => {
+                      navigator.clipboard.writeText(generateCode());
+                      setCopied(true);
+                      setTimeout(() => setCopied(false), 5000);
+                    }}
+                    size="sm"
+                    variant="outline"
+                  >
+                    {copied ? (
+                      <Check className="mr-2 h-4 w-4" />
+                    ) : (
+                      <Copy className="mr-2 h-4 w-4" />
+                    )}
+                    {copied ? "Copied" : "Copy"}
+                  </UIButton>
+                </div>
+                <SyntaxHighlighter
+                  className="rounded"
+                  language="jsx"
+                  style={oneDark}
+                >
+                  {generateCode()}
+                </SyntaxHighlighter>
               </div>
             </div>
-          ))}
-        </CardContent>
-      </Card>
-
-      <hr className="my-8" />
-
-      <Card>
-        <CardHeader>
-          <CardTitle>Toggle Icon Buttons</CardTitle>
-          <CardDescription>
-            Toggle buttons with unselected and selected states.
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-            {toggleVariants.map((variant) => (
-              <div className="space-y-2 rounded border p-4" key={variant}>
-                <h3 className="font-medium capitalize">{variant} Toggle</h3>
-                <IconButton
-                  buttonType="toggle"
-                  data-state={toggleChecked ? "checked" : "unchecked"}
-                  icon={
-                    <Heart fill={toggleChecked ? "currentColor" : "none"} />
-                  }
-                  onClick={() => setToggleChecked(!toggleChecked)}
-                  variant={variant}
-                />
-              </div>
-            ))}
           </div>
         </CardContent>
       </Card>

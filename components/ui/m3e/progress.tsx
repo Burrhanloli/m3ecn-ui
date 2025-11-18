@@ -202,88 +202,6 @@ const ProgressLinear = forwardRef<HTMLDivElement, ProgressLinearProps>(
 
 ProgressLinear.displayName = "Progress.Linear";
 
-/* Progress Circular Component */
-interface ProgressCircularProps extends ComponentProps<"svg"> {
-  size?: "sm" | "md" | "lg";
-  strokeWidth?: number;
-  fourColor?: boolean;
-}
-
-const progressCircularVariants = cva("", {
-  variants: {
-    size: {
-      sm: "h-6 w-6",
-      md: "h-12 w-12",
-      lg: "h-18 w-18",
-    },
-  },
-  defaultVariants: {
-    size: "md",
-  },
-});
-
-const ProgressCircular = forwardRef<SVGSVGElement, ProgressCircularProps>(
-  (
-    { className, size = "md", strokeWidth, fourColor = false, ...props },
-    ref
-  ) => {
-    const { value, max } = useProgressContext();
-
-    const percentage = Math.min(
-      Math.max((value / max) * PERCENTAGE_MULTIPLIER, MIN_PERCENTAGE),
-      MAX_PERCENTAGE
-    );
-
-    // Size and stroke calculations based on M3 specifications
-    const sizeMap = { sm: 24, md: 48, lg: 72 };
-    const defaultStrokeWidthMap = { sm: 3, md: 4, lg: 6 };
-    const diameter = sizeMap[size];
-    const radius =
-      (diameter - (strokeWidth || defaultStrokeWidthMap[size])) / 2;
-    const circumference = radius * 2 * Math.PI;
-
-    // Calculate stroke dash offset
-    const strokeDashoffset =
-      circumference - (percentage / PERCENTAGE_MULTIPLIER) * circumference;
-
-    return (
-      <svg
-        aria-label="Progress indicator"
-        className={cn(progressCircularVariants({ size }), className)}
-        data-slot="progress-circular-svg"
-        ref={ref}
-        role="img"
-        viewBox={`0 0 ${diameter} ${diameter}`}
-        {...props}
-      >
-        {/* Track circle */}
-        <circle
-          cx={diameter / 2}
-          cy={diameter / 2}
-          data-slot="progress-circular-track"
-          r={radius}
-          strokeWidth={strokeWidth || defaultStrokeWidthMap[size]}
-        />
-
-        {/* Progress indicator circle */}
-        <circle
-          className={cn(fourColor && "progress-circular-four-color")}
-          cx={diameter / 2}
-          cy={diameter / 2}
-          data-four-color={fourColor}
-          data-slot="progress-circular-indicator"
-          r={radius}
-          strokeDasharray={circumference}
-          strokeDashoffset={strokeDashoffset}
-          strokeWidth={strokeWidth || defaultStrokeWidthMap[size]}
-        />
-      </svg>
-    );
-  }
-);
-
-ProgressCircular.displayName = "Progress.Circular";
-
 /* Progress Label Component */
 interface ProgressLabelProps extends ComponentProps<"span"> {}
 
@@ -306,25 +224,20 @@ interface ProgressCompound
     ProgressProps & RefAttributes<HTMLDivElement>
   > {
   Linear: typeof ProgressLinear;
-  Circular: typeof ProgressCircular;
   Label: typeof ProgressLabel;
 }
 
 /* Attach sub-components to Progress */
 const ProgressWithSubComponents = Progress as ProgressCompound;
 ProgressWithSubComponents.Linear = ProgressLinear;
-ProgressWithSubComponents.Circular = ProgressCircular;
 ProgressWithSubComponents.Label = ProgressLabel;
 
 export {
   ProgressWithSubComponents as Progress,
   ProgressLinear,
-  ProgressCircular,
   ProgressLabel,
   progressLinearVariants,
-  progressCircularVariants,
   type ProgressProps,
   type ProgressLinearProps,
-  type ProgressCircularProps,
   type ProgressLabelProps,
 };
