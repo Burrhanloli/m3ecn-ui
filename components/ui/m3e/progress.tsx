@@ -110,52 +110,6 @@ const progressLinearVariants = cva("relative overflow-hidden", {
   },
 });
 
-const getWaveDataUri = (
-  amplitude: number,
-  wavelength: number,
-  color: string = "black"
-) => {
-  const width = wavelength;
-  const height = amplitude * 2 + 4; // Add padding to avoid clipping
-  const points = [];
-
-  for (let x = 0; x <= width; x++) {
-    // Sine wave formula: y = A * sin(2 * PI * x / wavelength)
-    // We center it vertically: y = A * sin(...) + height / 2
-    const y =
-      amplitude * Math.sin((2 * Math.PI * x) / wavelength) + height / 2;
-    points.push(`${x},${y}`);
-  }
-
-  // Close the path to create a filled shape for the mask
-  // We need to cover the area "below" the wave for the mask to work as expected for a progress bar?
-  // Actually, for a stroke-like effect, we might want a thick path.
-  // But M3 specs show a filled wave shape.
-  // Let's try a simple stroke first, but masks usually work on alpha.
-  // If we want the progress bar to LOOK like a wave, the mask should be the wave shape.
-  
-  // Re-reading specs: "The wavy shape is recommended when a more expressive style is desired".
-  // It looks like the entire track and indicator follow the wave path.
-  // So we need a mask that IS the wave.
-  
-  // Let's construct an SVG path.
-  const pathData = `M ${points.join(" L ")}`;
-  
-  // We need a stroke that matches the thickness.
-  // But we can't easily pass thickness here unless we make it part of the mask generation.
-  // Alternatively, we can make the mask a thick line.
-  
-  const svg = `
-    <svg width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" xmlns="http://www.w3.org/2000/svg">
-      <path d="${pathData}" fill="none" stroke="${color}" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
-    </svg>
-  `;
-
-  return `url("data:image/svg+xml;charset=utf-8,${encodeURIComponent(
-    svg.trim()
-  )}")`;
-};
-
 const ProgressLinear = forwardRef<HTMLDivElement, ProgressLinearProps>(
   (
     {
@@ -183,27 +137,29 @@ const ProgressLinear = forwardRef<HTMLDivElement, ProgressLinearProps>(
     const isWavy = variant === "wavy";
     const amplitude = 3; // Hardcoded according to specs
     const wavelength = 40; // Hardcoded according to specs
-    
+
     // Generate mask if wavy
     // We use a thick stroke for the mask to define the visible area
     // The stroke width in the SVG should match the component's thickness.
     // Default thickness is h-1 (4px), thick is h-2 (8px).
     const strokeWidth = thickness === "thick" ? 8 : 4;
-    
+
     const waveHeight = amplitude * 2 + strokeWidth + 2; // Add padding to avoid clipping
-    
+
     // For wavy, we need to adjust the container height
     const containerHeight = isWavy ? waveHeight : undefined;
-    
+
     // We draw the wave from -wavelength to 2*wavelength to ensure seamless tiling
     // and avoid any artifacts at the boundaries (0 and wavelength).
     // The viewBox clips it to show exactly one cycle (0 to wavelength).
-    const waveSvg = isWavy ? `
+    const waveSvg = isWavy
+      ? `
       <svg width="${wavelength}" height="${waveHeight}" viewBox="0 0 ${wavelength} ${waveHeight}" xmlns="http://www.w3.org/2000/svg">
-        <path d="M -${wavelength},${waveHeight/2} Q -${wavelength * 0.75},${(waveHeight/2) - amplitude} -${wavelength/2},${waveHeight/2} T 0,${waveHeight/2} T ${wavelength/2},${waveHeight/2} T ${wavelength},${waveHeight/2} T ${wavelength * 1.5},${waveHeight/2} T ${wavelength * 2},${waveHeight/2}" fill="none" stroke="black" stroke-width="${strokeWidth}" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M -${wavelength},${waveHeight / 2} Q -${wavelength * 0.75},${waveHeight / 2 - amplitude} -${wavelength / 2},${waveHeight / 2} T 0,${waveHeight / 2} T ${wavelength / 2},${waveHeight / 2} T ${wavelength},${waveHeight / 2} T ${wavelength * 1.5},${waveHeight / 2} T ${wavelength * 2},${waveHeight / 2}" fill="none" stroke="black" stroke-width="${strokeWidth}" stroke-linecap="round" stroke-linejoin="round"/>
       </svg>
-    ` : "";
-    
+    `
+      : "";
+
     const maskImage = isWavy
       ? `url("data:image/svg+xml;charset=utf-8,${encodeURIComponent(
           waveSvg.trim()
@@ -223,7 +179,7 @@ const ProgressLinear = forwardRef<HTMLDivElement, ProgressLinearProps>(
         data-variant={variant}
         ref={ref}
         style={{
-            height: containerHeight,
+          height: containerHeight,
         }}
         {...props}
       >
@@ -233,7 +189,7 @@ const ProgressLinear = forwardRef<HTMLDivElement, ProgressLinearProps>(
             to { mask-position: -${wavelength}px 0; -webkit-mask-position: -${wavelength}px 0; }
           }
         `}</style>
-        
+
         {/* Main progress indicator */}
         {
           <>
@@ -253,13 +209,13 @@ const ProgressLinear = forwardRef<HTMLDivElement, ProgressLinearProps>(
                     ? `calc(${percentage}% - ${gapSize}px)`
                     : `${percentage}%`,
                 // Apply mask ONLY to the active indicator if wavy
-                maskImage: maskImage,
+                maskImage,
                 maskRepeat: "repeat-x",
                 maskSize: `${wavelength}px ${waveHeight}px`,
                 WebkitMaskImage: maskImage,
                 WebkitMaskRepeat: "repeat-x",
                 WebkitMaskSize: `${wavelength}px ${waveHeight}px`,
-                animation: isWavy ? `wave-slide 1s linear infinite` : undefined,
+                animation: isWavy ? "wave-slide 1s linear infinite" : undefined,
               }}
             />
 
@@ -268,7 +224,7 @@ const ProgressLinear = forwardRef<HTMLDivElement, ProgressLinearProps>(
             <div
               className={cn(
                 "absolute rounded-full bg-surface-container-highest",
-                isWavy ? "top-1/2 -translate-y-1/2" : "top-0 h-full"
+                isWavy ? "-translate-y-1/2 top-1/2" : "top-0 h-full"
               )}
               data-slot="progress-linear-remaining-track"
               style={{
@@ -281,7 +237,11 @@ const ProgressLinear = forwardRef<HTMLDivElement, ProgressLinearProps>(
                   percentage > MIN_PERCENTAGE && percentage < MAX_PERCENTAGE
                     ? `calc(100% - ${percentage}% + ${gapSize}px - ${gapSize}px)`
                     : `calc(100% - ${percentage}%)`,
-                height: isWavy ? (thickness === "thick" ? "8px" : "4px") : undefined
+                height: isWavy
+                  ? thickness === "thick"
+                    ? "8px"
+                    : "4px"
+                  : undefined,
               }}
             />
 
@@ -345,7 +305,7 @@ const ProgressCircular = forwardRef<HTMLDivElement, ProgressCircularProps>(
 
     const strokeWidth = thickness === "thick" ? 8 : 4;
     const isWavy = variant === "wavy";
-    
+
     // Wavy parameters
     const amplitude = 1.6; // Slight amplitude for circular
     // We need an integer number of waves for the path to close perfectly
@@ -356,59 +316,60 @@ const ProgressCircular = forwardRef<HTMLDivElement, ProgressCircularProps>(
     const circumference = 2 * Math.PI * radius;
     const targetWavelength = 18;
     const waveCount = Math.round(circumference / targetWavelength);
-    
+
     // Generate path data
     let pathData = "";
     if (isWavy) {
-        // Generate wavy circle path
-        // x = (R + A * sin(N * theta)) * cos(theta)
-        // y = (R + A * sin(N * theta)) * sin(theta)
-        // We need to center it at (size/2, size/2)
-        const center = size / 2;
-        const points = [];
-        const steps = 360; // Resolution
-        
-        for (let i = 0; i <= steps; i++) {
-            const theta = (i / steps) * 2 * Math.PI;
-            // Subtract PI/2 to start from top
-            const angle = theta - Math.PI / 2;
-            
-            const r = radius + amplitude * Math.sin(waveCount * theta);
-            const x = center + r * Math.cos(angle);
-            const y = center + r * Math.sin(angle);
-            
-            points.push(`${i === 0 ? "M" : "L"} ${x},${y}`);
-        }
-        pathData = points.join(" ") + " Z";
+      // Generate wavy circle path
+      // x = (R + A * sin(N * theta)) * cos(theta)
+      // y = (R + A * sin(N * theta)) * sin(theta)
+      // We need to center it at (size/2, size/2)
+      const center = size / 2;
+      const points = [];
+      const steps = 360; // Resolution
+
+      for (let i = 0; i <= steps; i++) {
+        const theta = (i / steps) * 2 * Math.PI;
+        // Subtract PI/2 to start from top
+        const angle = theta - Math.PI / 2;
+
+        const r = radius + amplitude * Math.sin(waveCount * theta);
+        const x = center + r * Math.cos(angle);
+        const y = center + r * Math.sin(angle);
+
+        points.push(`${i === 0 ? "M" : "L"} ${x},${y}`);
+      }
+      pathData = `${points.join(" ")} Z`;
     } else {
-        // Standard circular path (circle)
-        // We use a path instead of <circle> to be consistent if we want to animate it similarly later,
-        // but <circle> is easier for stroke-dasharray calculations usually.
-        // However, to support the same "fill" logic, let's use <circle> for default.
+      // Standard circular path (circle)
+      // We use a path instead of <circle> to be consistent if we want to animate it similarly later,
+      // but <circle> is easier for stroke-dasharray calculations usually.
+      // However, to support the same "fill" logic, let's use <circle> for default.
     }
 
     // Calculate wavy path length for dasharray
-    let wavyPathLength = 0;
+    let _wavyPathLength = 0;
     if (isWavy) {
-        const center = size / 2;
-        const steps = 360;
-        let prevX = 0, prevY = 0;
-        
-        for (let i = 0; i <= steps; i++) {
-            const theta = (i / steps) * 2 * Math.PI;
-            const angle = theta - Math.PI / 2;
-            const r = radius + amplitude * Math.sin(waveCount * theta);
-            const x = center + r * Math.cos(angle);
-            const y = center + r * Math.sin(angle);
-            
-            if (i > 0) {
-                const dx = x - prevX;
-                const dy = y - prevY;
-                wavyPathLength += Math.sqrt(dx * dx + dy * dy);
-            }
-            prevX = x;
-            prevY = y;
+      const center = size / 2;
+      const steps = 360;
+      let prevX = 0,
+        prevY = 0;
+
+      for (let i = 0; i <= steps; i++) {
+        const theta = (i / steps) * 2 * Math.PI;
+        const angle = theta - Math.PI / 2;
+        const r = radius + amplitude * Math.sin(waveCount * theta);
+        const x = center + r * Math.cos(angle);
+        const y = center + r * Math.sin(angle);
+
+        if (i > 0) {
+          const dx = x - prevX;
+          const dy = y - prevY;
+          _wavyPathLength += Math.sqrt(dx * dx + dy * dy);
         }
+        prevX = x;
+        prevY = y;
+      }
     }
     // Gap calculation
     const visualGap = 4; // Desired visual gap in pixels
@@ -417,22 +378,25 @@ const ProgressCircular = forwardRef<HTMLDivElement, ProgressCircularProps>(
     // We need to increase the calculated gap by strokeWidth to maintain the visual gap.
     const gapSize = visualGap + strokeWidth;
     const halfGap = gapSize / 2;
-    
+
     // Length calculations
     // Active Length: The visual length of the active indicator
     // It should be: (Percentage * Circumference) - GapSize (half at start, half at end)
     const activeAngleLength = (percentage / 100) * circumference;
     const activeLength = Math.max(0, activeAngleLength - gapSize);
-    
+
     // Track Length: The visual length of the remaining track
     // It should be: (RemainingCircumference) - GapSize (half at start, half at end)
-    const trackLength = Math.max(0, circumference - activeAngleLength - gapSize);
-    
+    const trackLength = Math.max(
+      0,
+      circumference - activeAngleLength - gapSize
+    );
+
     // Rotations
     // Active starts at: -90deg + halfGap angle
     const halfGapAngle = (halfGap / circumference) * 360;
     const activeRotation = -90 + halfGapAngle;
-    
+
     // Track starts at: -90deg + ActiveAngle + halfGap angle
     const activeAngleDeg = (percentage / 100) * 360;
     const trackRotation = -90 + activeAngleDeg + halfGapAngle;
@@ -451,85 +415,85 @@ const ProgressCircular = forwardRef<HTMLDivElement, ProgressCircularProps>(
         {...props}
       >
         <svg
-            width={size}
-            height={size}
-            viewBox={`0 0 ${size} ${size}`}
-            className="rotate-0" 
-            xmlns="http://www.w3.org/2000/svg"
+          className="rotate-0"
+          height={size}
+          viewBox={`0 0 ${size} ${size}`}
+          width={size}
+          xmlns="http://www.w3.org/2000/svg"
         >
-            <style jsx>{`
+          <style jsx>{`
                 @keyframes circular-wave-slide {
                     from { transform: rotate(0deg); }
                     to { transform: rotate(360deg); }
                 }
             `}</style>
-            {isWavy && (
-                <defs>
-                    <mask id={maskId}>
-                        <circle
-                            cx={size / 2}
-                            cy={size / 2}
-                            r={radius}
-                            fill="none"
-                            stroke="white"
-                            strokeWidth={strokeWidth + 2 * amplitude + 2} // Thick enough to reveal waves
-                            strokeLinecap="round"
-                            strokeDasharray={`${activeLength} ${circumference}`}
-                            strokeDashoffset={0}
-                            transform={`rotate(${activeRotation} ${size / 2} ${size / 2})`}
-                        />
-                    </mask>
-                </defs>
-            )}
-
-            {/* Track (Remaining) - Always Circular */}
-            <circle
-                cx={size / 2}
-                cy={size / 2}
-                r={radius}
-                fill="none"
-                stroke="var(--color-surface-container-highest)"
-                strokeWidth={strokeWidth}
-                strokeLinecap="round"
-                strokeDasharray={`${trackLength} ${circumference}`}
-                strokeDashoffset={0}
-                transform={`rotate(${trackRotation} ${size / 2} ${size / 2})`}
-            />
-            
-            {/* Indicator (Active) */}
-            {isWavy ? (
-                <g mask={`url(#${maskId})`}>
-                    <path
-                        d={pathData}
-                        fill="none"
-                        stroke="var(--color-primary)"
-                        strokeWidth={strokeWidth}
-                        strokeLinecap="round"
-                        className={cn(
-                            "origin-center",
-                            fourColor && "progress-circular-four-color"
-                        )}
-                        style={{ animation: "circular-wave-slide 4s linear infinite" }} // Smooth wave slide
-                    />
-                </g>
-            ) : (
+          {isWavy && (
+            <defs>
+              <mask id={maskId}>
                 <circle
-                    cx={size / 2}
-                    cy={size / 2}
-                    r={radius}
-                    fill="none"
-                    stroke="var(--color-primary)"
-                    strokeWidth={strokeWidth}
-                    strokeLinecap="round"
-                    strokeDasharray={`${activeLength} ${circumference}`}
-                    strokeDashoffset={0}
-                    transform={`rotate(${activeRotation} ${size / 2} ${size / 2})`}
-                    className={cn(
-                        "transition-all duration-500 ease-in-out",
-                        fourColor && "progress-circular-four-color"
-                    )}
+                  cx={size / 2}
+                  cy={size / 2}
+                  fill="none"
+                  r={radius}
+                  stroke="white"
+                  strokeDasharray={`${activeLength} ${circumference}`} // Thick enough to reveal waves
+                  strokeDashoffset={0}
+                  strokeLinecap="round"
+                  strokeWidth={strokeWidth + 2 * amplitude + 2}
+                  transform={`rotate(${activeRotation} ${size / 2} ${size / 2})`}
                 />
-            )}
+              </mask>
+            </defs>
+          )}
+
+          {/* Track (Remaining) - Always Circular */}
+          <circle
+            cx={size / 2}
+            cy={size / 2}
+            fill="none"
+            r={radius}
+            stroke="var(--color-surface-container-highest)"
+            strokeDasharray={`${trackLength} ${circumference}`}
+            strokeDashoffset={0}
+            strokeLinecap="round"
+            strokeWidth={strokeWidth}
+            transform={`rotate(${trackRotation} ${size / 2} ${size / 2})`}
+          />
+
+          {/* Indicator (Active) */}
+          {isWavy ? (
+            <g mask={`url(#${maskId})`}>
+              <path
+                className={cn(
+                  "origin-center",
+                  fourColor && "progress-circular-four-color"
+                )}
+                d={pathData}
+                fill="none"
+                stroke="var(--color-primary)"
+                strokeLinecap="round"
+                strokeWidth={strokeWidth}
+                style={{ animation: "circular-wave-slide 4s linear infinite" }} // Smooth wave slide
+              />
+            </g>
+          ) : (
+            <circle
+              className={cn(
+                "transition-all duration-500 ease-in-out",
+                fourColor && "progress-circular-four-color"
+              )}
+              cx={size / 2}
+              cy={size / 2}
+              fill="none"
+              r={radius}
+              stroke="var(--color-primary)"
+              strokeDasharray={`${activeLength} ${circumference}`}
+              strokeDashoffset={0}
+              strokeLinecap="round"
+              strokeWidth={strokeWidth}
+              transform={`rotate(${activeRotation} ${size / 2} ${size / 2})`}
+            />
+          )}
         </svg>
       </div>
     );

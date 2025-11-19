@@ -26,6 +26,10 @@ const items = [
     url: "/docs/card",
   },
   {
+    title: "Carousel",
+    url: "/docs/carousel",
+  },
+  {
     title: "Divider",
     url: "/docs/divider",
   },

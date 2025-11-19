@@ -1,6 +1,6 @@
 "use client";
 
-import { Check, Copy, Plus, X, Edit, Share, Star, Mail, Image, FileText } from "lucide-react";
+import { Check, Copy, Edit, Plus, Share, Star, X } from "lucide-react";
 import { useState } from "react";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { oneDark } from "react-syntax-highlighter/dist/esm/styles/prism";
@@ -15,9 +15,9 @@ import {
 import { Label } from "@/components/ui/label";
 import {
   FabMenu,
-  FabMenuTrigger,
   FabMenuContent,
   FabMenuItem,
+  FabMenuTrigger,
 } from "@/components/ui/m3e/fab-menu";
 import {
   Select,
@@ -34,8 +34,8 @@ export default function FabMenuDocs() {
 
   const variants = ["primary", "secondary", "tertiary"] as const;
 
-  const generateCode = () => {
-    return `<FabMenu variant="${variant}" open={isOpen} onOpenChange={setIsOpen}>
+  const generateCode =
+    () => `<FabMenu variant="${variant}" open={isOpen} onOpenChange={setIsOpen}>
   <FabMenuTrigger
     icon={<Plus />}
     iconWhenOpen={<X />}
@@ -46,7 +46,6 @@ export default function FabMenuDocs() {
     <FabMenuItem icon={<Star />} label="Favorite" onClick={() => console.log('Favorite')} />
   </FabMenuContent>
 </FabMenu>`;
-  };
 
   return (
     <div className="container mx-auto space-y-8 p-8">
@@ -96,26 +95,26 @@ export default function FabMenuDocs() {
               <Label>Preview</Label>
               <div className="flex min-h-[400px] items-end justify-center rounded border bg-surface-container-lowest p-12">
                 <FabMenu
-                  variant={variant as any}
-                  open={isOpen}
                   onOpenChange={setIsOpen}
+                  open={isOpen}
+                  variant={variant as any}
                 >
                   <FabMenuTrigger icon={<Plus />} iconWhenOpen={<X />} />
                   <FabMenuContent>
                     <FabMenuItem
                       icon={<Edit />}
                       label="Edit"
-                      onClick={() => console.log("Edit")}
+                      onClick={() => {}}
                     />
                     <FabMenuItem
                       icon={<Share />}
                       label="Share"
-                      onClick={() => console.log("Share")}
+                      onClick={() => {}}
                     />
                     <FabMenuItem
                       icon={<Star />}
                       label="Favorite"
-                      onClick={() => console.log("Favorite")}
+                      onClick={() => {}}
                     />
                   </FabMenuContent>
                 </FabMenu>

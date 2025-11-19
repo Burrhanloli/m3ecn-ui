@@ -1,19 +1,19 @@
 "use client";
 
 import { Slot } from "@radix-ui/react-slot";
-import { cva, type VariantProps } from "class-variance-authority";
-import { type HTMLMotionProps, motion, AnimatePresence } from "framer-motion";
+import { cva } from "class-variance-authority";
+import { AnimatePresence, type HTMLMotionProps, motion } from "framer-motion";
 import * as React from "react";
 import { cn } from "@/lib/utils";
 import "@/components/ui/m3e/styles/m3e-colors.css";
 
 // Context for managing FAB Menu state
-interface FabMenuContextValue {
+type FabMenuContextValue = {
   open: boolean;
   setOpen: (open: boolean) => void;
   variant: "primary" | "secondary" | "tertiary";
   size: "standard" | "medium" | "large";
-}
+};
 
 const FabMenuContext = React.createContext<FabMenuContextValue | undefined>(
   undefined
@@ -28,14 +28,14 @@ const useFabMenuContext = () => {
 };
 
 // FAB Menu Root Component
-interface FabMenuProps {
+type FabMenuProps = {
   variant?: "primary" | "secondary" | "tertiary";
   size?: "standard" | "medium" | "large";
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
   children: React.ReactNode;
   className?: string;
-}
+};
 
 function FabMenu({
   variant = "primary",
@@ -52,9 +52,7 @@ function FabMenu({
 
   return (
     <FabMenuContext.Provider value={{ open, setOpen, variant, size }}>
-      <div className={cn("relative inline-block", className)}>
-        {children}
-      </div>
+      <div className={cn("relative inline-block", className)}>{children}</div>
     </FabMenuContext.Provider>
   );
 }
@@ -98,7 +96,7 @@ function FabMenuTrigger({
   ...props
 }: FabMenuTriggerProps) {
   const { open, setOpen, variant, size } = useFabMenuContext();
-  
+
   const handleClick = React.useCallback(
     (event: React.MouseEvent<HTMLButtonElement>) => {
       setOpen(!open);
@@ -106,26 +104,28 @@ function FabMenuTrigger({
         props.onClick(event);
       }
     },
-    [open, setOpen, props]
+    [open, setOpen, props.onClick]
   );
 
   const displayIcon = open && iconWhenOpen ? iconWhenOpen : icon;
   const triggerClass = cn(fabMenuTriggerVariants({ variant, size }), className);
 
   if (asChild) {
-    return <Slot className={triggerClass} data-slot="fab-menu-trigger" {...props} />;
+    return (
+      <Slot className={triggerClass} data-slot="fab-menu-trigger" {...props} />
+    );
   }
 
   return (
     <motion.button
-      className={triggerClass}
-      data-slot="fab-menu-trigger"
-      onClick={handleClick}
-      aria-expanded={open}
-      aria-haspopup="menu"
       animate={{
         borderRadius: open ? "50%" : "16px",
       }}
+      aria-expanded={open}
+      aria-haspopup="menu"
+      className={triggerClass}
+      data-slot="fab-menu-trigger"
+      onClick={handleClick}
       transition={{
         type: "spring",
         stiffness: 300,
@@ -134,10 +134,10 @@ function FabMenuTrigger({
       {...(props as HTMLMotionProps<"button">)}
     >
       <motion.div
-        key={open ? "open" : "closed"}
-        initial={{ rotate: 0, scale: 0.8, opacity: 0 }}
         animate={{ rotate: 0, scale: 1, opacity: 1 }}
         exit={{ rotate: 90, scale: 0.8, opacity: 0 }}
+        initial={{ rotate: 0, scale: 0.8, opacity: 0 }}
+        key={open ? "open" : "closed"}
         transition={{ duration: 0.2 }}
       >
         {displayIcon}
@@ -147,10 +147,10 @@ function FabMenuTrigger({
 }
 
 // FAB Menu Content (container for menu items)
-interface FabMenuContentProps {
+type FabMenuContentProps = {
   children: React.ReactNode;
   className?: string;
-}
+};
 
 function FabMenuContent({ children, className }: FabMenuContentProps) {
   const { open, setOpen } = useFabMenuContext();
@@ -161,7 +161,9 @@ function FabMenuContent({ children, className }: FabMenuContentProps) {
 
   // Close menu on Escape key
   React.useEffect(() => {
-    if (!open) return;
+    if (!open) {
+      return;
+    }
 
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
@@ -179,12 +181,12 @@ function FabMenuContent({ children, className }: FabMenuContentProps) {
       <AnimatePresence>
         {open && (
           <motion.div
-            className="fixed inset-0 z-40 bg-scrim/32 cursor-pointer"
-            data-slot="fab-menu-scrim"
-            onClick={handleScrimClick}
-            initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
+            className="fixed inset-0 z-40 cursor-pointer bg-scrim/32"
+            data-slot="fab-menu-scrim"
             exit={{ opacity: 0 }}
+            initial={{ opacity: 0 }}
+            onClick={handleScrimClick}
             transition={{ duration: 0.15 }}
           />
         )}
@@ -194,12 +196,15 @@ function FabMenuContent({ children, className }: FabMenuContentProps) {
       <AnimatePresence>
         {open && (
           <motion.div
-            className={cn("absolute bottom-full right-0 z-50 mb-4 flex flex-col items-end gap-2", className)}
-            data-slot="fab-menu-content"
-            role="menu"
-            initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
+            className={cn(
+              "absolute right-0 bottom-full z-50 mb-4 flex flex-col items-end gap-2",
+              className
+            )}
+            data-slot="fab-menu-content"
             exit={{ opacity: 0 }}
+            initial={{ opacity: 0 }}
+            role="menu"
             transition={{ duration: 0.15 }}
           >
             {React.Children.map(children, (child, index) => {
@@ -207,10 +212,10 @@ function FabMenuContent({ children, className }: FabMenuContentProps) {
               const reverseIndex = totalChildren - 1 - index;
               return (
                 <motion.div
-                  key={index}
-                  initial={{ opacity: 0, y: 20, scale: 0.8 }}
                   animate={{ opacity: 1, y: 0, scale: 1 }}
                   exit={{ opacity: 0, y: 20, scale: 0.8 }}
+                  initial={{ opacity: 0, y: 20, scale: 0.8 }}
+                  key={index}
                   transition={{
                     duration: 0.2,
                     delay: reverseIndex * 0.05, // Staggered animation
@@ -230,7 +235,7 @@ function FabMenuContent({ children, className }: FabMenuContentProps) {
 
 // FAB Menu Item - Uses variant colors to match FAB trigger
 const fabMenuItemVariants = cva(
-  "relative inline-flex h-[56px] shrink-0 items-center gap-3 overflow-hidden whitespace-nowrap rounded-[16px] pl-4 pr-5 font-medium text-[14px] leading-[20px] tracking-[0.1px] outline-none transition-all duration-100 before:absolute before:inset-0 before:opacity-0 before:transition-opacity before:duration-200 hover:before:opacity-8 focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-secondary focus-visible:ring-offset-2 active:scale-96 active:before:opacity-12 disabled:pointer-events-none disabled:bg-on-surface/12 disabled:text-on-surface/38 disabled:shadow-none [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-[24px]",
+  "relative inline-flex h-[56px] shrink-0 items-center gap-3 overflow-hidden whitespace-nowrap rounded-[16px] pr-5 pl-4 font-medium text-[14px] leading-[20px] tracking-[0.1px] outline-none transition-all duration-100 before:absolute before:inset-0 before:opacity-0 before:transition-opacity before:duration-200 hover:before:opacity-8 focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-secondary focus-visible:ring-offset-2 active:scale-96 active:before:opacity-12 disabled:pointer-events-none disabled:bg-on-surface/12 disabled:text-on-surface/38 disabled:shadow-none [&_svg:not([class*='size-'])]:size-[24px] [&_svg]:pointer-events-none [&_svg]:shrink-0",
   {
     variants: {
       variant: {

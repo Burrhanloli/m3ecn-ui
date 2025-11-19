@@ -14,9 +14,8 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Switch } from "@/components/ui/switch";
-import { Fab } from "@/components/ui/m3e/fab";
 import { ExtendedFab } from "@/components/ui/m3e/extended-fab";
+import { Fab } from "@/components/ui/m3e/fab";
 import {
   Select,
   SelectContent,
@@ -188,10 +187,7 @@ export default function FabDocs() {
 
               <div className="space-y-2">
                 <Label htmlFor="extended-size-select">Size</Label>
-                <Select
-                  onValueChange={setExtendedSize}
-                  value={extendedSize}
-                >
+                <Select onValueChange={setExtendedSize} value={extendedSize}>
                   <SelectTrigger id="extended-size-select">
                     <SelectValue />
                   </SelectTrigger>
@@ -207,10 +203,7 @@ export default function FabDocs() {
 
               <div className="space-y-2">
                 <Label htmlFor="icon-position-select">Icon Position</Label>
-                <Select
-                  onValueChange={setIconPosition}
-                  value={iconPosition}
-                >
+                <Select onValueChange={setIconPosition} value={iconPosition}>
                   <SelectTrigger id="icon-position-select">
                     <SelectValue />
                   </SelectTrigger>

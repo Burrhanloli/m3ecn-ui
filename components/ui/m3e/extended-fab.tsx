@@ -35,37 +35,37 @@ const extendedFabVariants = cva(
       {
         size: "small",
         iconPosition: "leading",
-        className: "pl-[16px] pr-[20px] gap-[12px]",
+        className: "gap-[12px] pr-[20px] pl-[16px]",
       },
       // Small size spacing - icon trailing
       {
         size: "small",
         iconPosition: "trailing",
-        className: "pl-[20px] pr-[16px] gap-[12px]",
+        className: "gap-[12px] pr-[16px] pl-[20px]",
       },
       // Medium size spacing - icon leading
       {
         size: "medium",
         iconPosition: "leading",
-        className: "pl-[16px] pr-[20px] gap-[12px]",
+        className: "gap-[12px] pr-[20px] pl-[16px]",
       },
       // Medium size spacing - icon trailing
       {
         size: "medium",
         iconPosition: "trailing",
-        className: "pl-[20px] pr-[16px] gap-[12px]",
+        className: "gap-[12px] pr-[16px] pl-[20px]",
       },
       // Large size spacing - icon leading
       {
         size: "large",
         iconPosition: "leading",
-        className: "pl-[28px] pr-[32px] gap-[12px]",
+        className: "gap-[12px] pr-[32px] pl-[28px]",
       },
       // Large size spacing - icon trailing
       {
         size: "large",
         iconPosition: "trailing",
-        className: "pl-[32px] pr-[28px] gap-[12px]",
+        className: "gap-[12px] pr-[28px] pl-[32px]",
       },
     ],
     defaultVariants: {

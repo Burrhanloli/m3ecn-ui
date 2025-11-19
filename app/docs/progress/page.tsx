@@ -47,12 +47,14 @@ export default function ProgressDocs() {
     if (variant === "wavy") {
       props += ' variant="wavy"';
     }
-    
+
     if (type === "circular") {
-        if (size !== 48) props += ` size={${size}}`;
-        return `<Progress value={${value}} max={100}>\n  <Progress.Circular ${props} />\n</Progress>`;
+      if (size !== 48) {
+        props += ` size={${size}}`;
+      }
+      return `<Progress value={${value}} max={100}>\n  <Progress.Circular ${props} />\n</Progress>`;
     }
-    
+
     return `<Progress value={${value}} max={100}>\n  <Progress.Linear ${props} />\n</Progress>`;
   };
 
@@ -90,30 +92,30 @@ export default function ProgressDocs() {
               <div className="space-y-2">
                 <Label>Type</Label>
                 <div className="flex space-x-4">
-                    <div className="flex items-center space-x-2">
-                        <input 
-                            type="radio" 
-                            id="type-linear" 
-                            name="type" 
-                            value="linear" 
-                            checked={type === "linear"} 
-                            onChange={() => setType("linear")}
-                            className="h-4 w-4"
-                        />
-                        <Label htmlFor="type-linear">Linear</Label>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                        <input 
-                            type="radio" 
-                            id="type-circular" 
-                            name="type" 
-                            value="circular" 
-                            checked={type === "circular"} 
-                            onChange={() => setType("circular")}
-                            className="h-4 w-4"
-                        />
-                        <Label htmlFor="type-circular">Circular</Label>
-                    </div>
+                  <div className="flex items-center space-x-2">
+                    <input
+                      checked={type === "linear"}
+                      className="h-4 w-4"
+                      id="type-linear"
+                      name="type"
+                      onChange={() => setType("linear")}
+                      type="radio"
+                      value="linear"
+                    />
+                    <Label htmlFor="type-linear">Linear</Label>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <input
+                      checked={type === "circular"}
+                      className="h-4 w-4"
+                      id="type-circular"
+                      name="type"
+                      onChange={() => setType("circular")}
+                      type="radio"
+                      value="circular"
+                    />
+                    <Label htmlFor="type-circular">Circular</Label>
+                  </div>
                 </div>
               </div>
 
@@ -137,13 +139,11 @@ export default function ProgressDocs() {
                   </SelectContent>
                 </Select>
               </div>
-              
+
               <div className="space-y-2">
                 <Label htmlFor="variant-select">Variant</Label>
                 <Select
-                  onValueChange={(val) =>
-                    setVariant(val as "linear" | "wavy")
-                  }
+                  onValueChange={(val) => setVariant(val as "linear" | "wavy")}
                   value={variant}
                 >
                   <SelectTrigger id="variant-select">
@@ -160,25 +160,27 @@ export default function ProgressDocs() {
               </div>
 
               {type === "circular" && (
-                  <div className="space-y-2">
-                    <Label htmlFor="size-input">Size (px)</Label>
-                    <input
-                      className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:font-medium file:text-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                      id="size-input"
-                      min="24"
-                      max="240"
-                      onChange={(e) => setSize(Number(e.target.value))}
-                      type="number"
-                      value={size}
-                    />
-                  </div>
+                <div className="space-y-2">
+                  <Label htmlFor="size-input">Size (px)</Label>
+                  <input
+                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:font-medium file:text-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                    id="size-input"
+                    max="240"
+                    min="24"
+                    onChange={(e) => setSize(Number(e.target.value))}
+                    type="number"
+                    value={size}
+                  />
+                </div>
               )}
 
               <div className="flex items-center space-x-2">
                 <Checkbox
                   checked={fourColor}
                   id="four-color"
-                  onCheckedChange={(checked) => setFourColor(checked as boolean)}
+                  onCheckedChange={(checked) =>
+                    setFourColor(checked as boolean)
+                  }
                 />
                 <Label htmlFor="four-color">Four Color Animation</Label>
               </div>
@@ -197,22 +199,27 @@ export default function ProgressDocs() {
             </div>
             <div className="space-y-4">
               <div className="flex min-h-[200px] items-center justify-center rounded-lg border bg-surface-container-lowest p-8">
-                <div className="space-y-4 w-full flex flex-col items-center">
+                <div className="flex w-full flex-col items-center space-y-4">
                   <Label>Preview</Label>
-                  <Progress aria-label="Progress preview" max={100} value={value} className={type === "circular" ? "w-auto" : "w-full"}>
+                  <Progress
+                    aria-label="Progress preview"
+                    className={type === "circular" ? "w-auto" : "w-full"}
+                    max={100}
+                    value={value}
+                  >
                     {type === "linear" ? (
-                        <Progress.Linear
-                          fourColor={fourColor}
-                          thickness={thickness}
-                          variant={variant}
-                        />
+                      <Progress.Linear
+                        fourColor={fourColor}
+                        thickness={thickness}
+                        variant={variant}
+                      />
                     ) : (
-                        <Progress.Circular
-                          fourColor={fourColor}
-                          thickness={thickness}
-                          variant={variant}
-                          size={size}
-                        />
+                      <Progress.Circular
+                        fourColor={fourColor}
+                        size={size}
+                        thickness={thickness}
+                        variant={variant}
+                      />
                     )}
                   </Progress>
                 </div>
@@ -220,11 +227,7 @@ export default function ProgressDocs() {
               <div>
                 <div className="flex items-center justify-between">
                   <Label>Code</Label>
-                  <UIButton
-                    onClick={handleCopy}
-                    size="sm"
-                    variant="outline"
-                  >
+                  <UIButton onClick={handleCopy} size="sm" variant="outline">
                     {copied ? (
                       <Check className="mr-2 h-4 w-4" />
                     ) : (
