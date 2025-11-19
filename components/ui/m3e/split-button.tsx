@@ -48,8 +48,8 @@ const getSplitCornerRadius = (
 const splitButtonVariants = cva("inline-flex shrink-0 items-center gap-[2px]", {
   variants: {
     size: {
-      xs: "pr-[10px] pl-[12px] [&_svg:not([class*='size-'])]:size-[20px]",
-      s: "pr-[12px] pl-[16px] [&_svg:not([class*='size-'])]:size-[20px]",
+      xs: "pr-[10px] pl-[12px] [&_svg:not([class*='size-'])]:size-[16px]",
+      s: "pr-[12px] pl-[16px] [&_svg:not([class*='size-'])]:size-[18px]",
       m: "pr-[24px] pl-[24px] [&_svg:not([class*='size-'])]:size-[24px]",
       l: "pr-[48px] pl-[48px] [&_svg:not([class*='size-'])]:size-[32px]",
       xl: "pr-[64px] pl-[64px] [&_svg:not([class*='size-'])]:size-[40px]",

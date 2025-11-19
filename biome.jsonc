@@ -6,7 +6,8 @@
     "rules": {
       "recommended": true,
       "performance": {
-        "noNamespaceImport": "warn"
+        "noNamespaceImport": "warn",
+        "noImgElement": "warn"
       },
       "nursery": {
         "useMaxParams": "warn"
@@ -29,7 +30,8 @@
         "noExcessiveCognitiveComplexity": "warn"
       },
       "correctness": {
-        "noNestedComponentDefinitions": "warn"
+        "noNestedComponentDefinitions": "warn",
+        "useImageSize": "warn"
       },
       "security": {
         "noDangerouslySetInnerHtml": "warn"
