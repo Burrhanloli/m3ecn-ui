@@ -5,6 +5,7 @@ import useEmblaCarousel, {
 } from "embla-carousel-react";
 import * as React from "react";
 import { cn } from "@/lib/utils";
+import "@/components/ui/m3e/styles/m3e-colors.css";
 
 type CarouselApi = UseEmblaCarouselType[1];
 type UseCarouselParameters = Parameters<typeof useEmblaCarousel>;
